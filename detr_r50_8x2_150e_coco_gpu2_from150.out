@@ -1,0 +1,470 @@
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/torch/distributed/launch.py:186: FutureWarning: The module torch.distributed.launch is deprecated
+and will be removed in future. Use torch.distributed.run.
+Note that --use_env is set by default in torch.distributed.run.
+If your script expects `--local_rank` argument to be set, please
+change it to read from `os.environ['LOCAL_RANK']` instead. See 
+https://pytorch.org/docs/stable/distributed.html#launch-utility for 
+further instructions
+
+  FutureWarning,
+WARNING:torch.distributed.run:*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+2021-10-11 20:49:49,668 - mmdet - INFO - Environment info:
+------------------------------------------------------------
+sys.platform: linux
+Python: 3.7.11 (default, Jul 27 2021, 14:32:16) [GCC 7.5.0]
+CUDA available: True
+GPU 0,1: GeForce GTX 1080 Ti
+CUDA_HOME: /usr/local/cuda
+NVCC: Cuda compilation tools, release 10.1, V10.1.243
+GCC: gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
+PyTorch: 1.9.1
+PyTorch compiling details: PyTorch built with:
+  - GCC 7.3
+  - C++ Version: 201402
+  - Intel(R) oneAPI Math Kernel Library Version 2021.3-Product Build 20210617 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.1.2 (Git Hash 98be7e8afa711dc9b66c8ff3504129cb82013cdb)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 10.2
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_37,code=compute_37
+  - CuDNN 7.6.5
+  - Magma 2.5.2
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=10.2, CUDNN_VERSION=7.6.5, CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/c++, CXX_FLAGS= -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -fopenmp -DNDEBUG -DUSE_KINETO -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wno-narrowing -Wall -Wextra -Werror=return-type -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-unused-local-typedefs -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=1.9.1, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, 
+
+TorchVision: 0.10.1
+OpenCV: 4.5.3
+MMCV: 1.3.8
+MMCV Compiler: GCC 7.5
+MMCV CUDA Compiler: 10.1
+MMDetection: 2.16.0+
+------------------------------------------------------------
+
+2021-10-11 20:49:55,869 - mmdet - INFO - Distributed training: True
+2021-10-11 20:50:01,714 - mmdet - INFO - Config:
+dataset_type = 'CocoDataset'
+data_root = '/ayb/UVM_Datasets/'
+img_norm_cfg = dict(
+    mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations', with_bbox=True),
+    dict(type='RandomFlip', flip_ratio=0.5),
+    dict(
+        type='AutoAugment',
+        policies=[[{
+            'type':
+            'Resize',
+            'img_scale': [(480, 1333), (512, 1333), (544, 1333), (576, 1333),
+                          (608, 1333), (640, 1333), (672, 1333), (704, 1333),
+                          (736, 1333), (768, 1333), (800, 1333)],
+            'multiscale_mode':
+            'value',
+            'keep_ratio':
+            True
+        }],
+                  [{
+                      'type': 'Resize',
+                      'img_scale': [(400, 1333), (500, 1333), (600, 1333)],
+                      'multiscale_mode': 'value',
+                      'keep_ratio': True
+                  }, {
+                      'type': 'RandomCrop',
+                      'crop_type': 'absolute_range',
+                      'crop_size': (384, 600),
+                      'allow_negative_crop': True
+                  }, {
+                      'type':
+                      'Resize',
+                      'img_scale': [(480, 1333), (512, 1333), (544, 1333),
+                                    (576, 1333), (608, 1333), (640, 1333),
+                                    (672, 1333), (704, 1333), (736, 1333),
+                                    (768, 1333), (800, 1333)],
+                      'multiscale_mode':
+                      'value',
+                      'override':
+                      True,
+                      'keep_ratio':
+                      True
+                  }]]),
+    dict(
+        type='Normalize',
+        mean=[123.675, 116.28, 103.53],
+        std=[58.395, 57.12, 57.375],
+        to_rgb=True),
+    dict(type='Pad', size_divisor=1),
+    dict(type='DefaultFormatBundle'),
+    dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+]
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(
+        type='MultiScaleFlipAug',
+        img_scale=(1333, 800),
+        flip=False,
+        transforms=[
+            dict(type='Resize', keep_ratio=True),
+            dict(type='RandomFlip'),
+            dict(
+                type='Normalize',
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
+                to_rgb=True),
+            dict(type='Pad', size_divisor=1),
+            dict(type='ImageToTensor', keys=['img']),
+            dict(type='Collect', keys=['img'])
+        ])
+]
+data = dict(
+    samples_per_gpu=1,
+    workers_per_gpu=0,
+    train=dict(
+        type='CocoDataset',
+        ann_file='/ayb/UVM_Datasets/voc_train3.json',
+        img_prefix='/ayb/UVM_Datasets/voc8/VOCdevkit/VOC2007/JPEGImages',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='LoadAnnotations', with_bbox=True),
+            dict(type='RandomFlip', flip_ratio=0.5),
+            dict(
+                type='AutoAugment',
+                policies=[[{
+                    'type':
+                    'Resize',
+                    'img_scale': [(480, 1333), (512, 1333), (544, 1333),
+                                  (576, 1333), (608, 1333), (640, 1333),
+                                  (672, 1333), (704, 1333), (736, 1333),
+                                  (768, 1333), (800, 1333)],
+                    'multiscale_mode':
+                    'value',
+                    'keep_ratio':
+                    True
+                }],
+                          [{
+                              'type': 'Resize',
+                              'img_scale': [(400, 1333), (500, 1333),
+                                            (600, 1333)],
+                              'multiscale_mode': 'value',
+                              'keep_ratio': True
+                          }, {
+                              'type': 'RandomCrop',
+                              'crop_type': 'absolute_range',
+                              'crop_size': (384, 600),
+                              'allow_negative_crop': True
+                          }, {
+                              'type':
+                              'Resize',
+                              'img_scale': [(480, 1333), (512, 1333),
+                                            (544, 1333), (576, 1333),
+                                            (608, 1333), (640, 1333),
+                                            (672, 1333), (704, 1333),
+                                            (736, 1333), (768, 1333),
+                                            (800, 1333)],
+                              'multiscale_mode':
+                              'value',
+                              'override':
+                              True,
+                              'keep_ratio':
+                              True
+                          }]]),
+            dict(
+                type='Normalize',
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
+                to_rgb=True),
+            dict(type='Pad', size_divisor=1),
+            dict(type='DefaultFormatBundle'),
+            dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+        ]),
+    val=dict(
+        type='CocoDataset',
+        ann_file='/ayb/UVM_Datasets/voc_valid3.json',
+        img_prefix='/ayb/UVM_Datasets/voc8/VOCdevkit/VOC2007/JPEGImages',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(
+                type='MultiScaleFlipAug',
+                img_scale=(1333, 800),
+                flip=False,
+                transforms=[
+                    dict(type='Resize', keep_ratio=True),
+                    dict(type='RandomFlip'),
+                    dict(
+                        type='Normalize',
+                        mean=[123.675, 116.28, 103.53],
+                        std=[58.395, 57.12, 57.375],
+                        to_rgb=True),
+                    dict(type='Pad', size_divisor=1),
+                    dict(type='ImageToTensor', keys=['img']),
+                    dict(type='Collect', keys=['img'])
+                ])
+        ]),
+    test=dict(
+        type='CocoDataset',
+        ann_file='/ayb/UVM_Datasets/voc_test3.json',
+        img_prefix='/ayb/UVM_Datasets/voc8/VOCdevkit/VOC2007/JPEGImages',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(
+                type='MultiScaleFlipAug',
+                img_scale=(1333, 800),
+                flip=False,
+                transforms=[
+                    dict(type='Resize', keep_ratio=True),
+                    dict(type='RandomFlip'),
+                    dict(
+                        type='Normalize',
+                        mean=[123.675, 116.28, 103.53],
+                        std=[58.395, 57.12, 57.375],
+                        to_rgb=True),
+                    dict(type='Pad', size_divisor=1),
+                    dict(type='ImageToTensor', keys=['img']),
+                    dict(type='Collect', keys=['img'])
+                ])
+        ]))
+evaluation = dict(interval=10, metric='bbox')
+checkpoint_config = dict(interval=1)
+log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
+custom_hooks = [dict(type='NumClassCheckHook')]
+dist_params = dict(backend='nccl')
+log_level = 'INFO'
+load_from = None
+resume_from = '/root/mmdetection/work_dirs/detr_r50_8x2_150e_coco/epoch_150.pth'
+workflow = [('train', 1)]
+model = dict(
+    type='DETR',
+    backbone=dict(
+        type='ResNet',
+        depth=50,
+        num_stages=4,
+        out_indices=(3, ),
+        frozen_stages=1,
+        norm_cfg=dict(type='BN', requires_grad=False),
+        norm_eval=True,
+        style='pytorch',
+        init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
+    bbox_head=dict(
+        type='DETRHead',
+        num_classes=10,
+        in_channels=2048,
+        transformer=dict(
+            type='Transformer',
+            encoder=dict(
+                type='DetrTransformerEncoder',
+                num_layers=6,
+                transformerlayers=dict(
+                    type='BaseTransformerLayer',
+                    attn_cfgs=[
+                        dict(
+                            type='MultiheadAttention',
+                            embed_dims=256,
+                            num_heads=8,
+                            dropout=0.1)
+                    ],
+                    feedforward_channels=2048,
+                    ffn_dropout=0.1,
+                    operation_order=('self_attn', 'norm', 'ffn', 'norm'))),
+            decoder=dict(
+                type='DetrTransformerDecoder',
+                return_intermediate=True,
+                num_layers=6,
+                transformerlayers=dict(
+                    type='DetrTransformerDecoderLayer',
+                    attn_cfgs=dict(
+                        type='MultiheadAttention',
+                        embed_dims=256,
+                        num_heads=8,
+                        dropout=0.1),
+                    feedforward_channels=2048,
+                    ffn_dropout=0.1,
+                    operation_order=('self_attn', 'norm', 'cross_attn', 'norm',
+                                     'ffn', 'norm')))),
+        positional_encoding=dict(
+            type='SinePositionalEncoding', num_feats=128, normalize=True),
+        loss_cls=dict(
+            type='CrossEntropyLoss',
+            bg_cls_weight=0.1,
+            use_sigmoid=False,
+            loss_weight=1.0,
+            class_weight=1.0),
+        loss_bbox=dict(type='L1Loss', loss_weight=5.0),
+        loss_iou=dict(type='GIoULoss', loss_weight=2.0)),
+    train_cfg=dict(
+        assigner=dict(
+            type='HungarianAssigner',
+            cls_cost=dict(type='ClassificationCost', weight=1.0),
+            reg_cost=dict(type='BBoxL1Cost', weight=5.0, box_format='xywh'),
+            iou_cost=dict(type='IoUCost', iou_mode='giou', weight=2.0))),
+    test_cfg=dict(max_per_img=100))
+optimizer = dict(
+    type='AdamW',
+    lr=1e-05,
+    weight_decay=0.0001,
+    paramwise_cfg=dict(
+        custom_keys=dict(backbone=dict(lr_mult=0.1, decay_mult=1.0))))
+optimizer_config = dict(grad_clip=dict(max_norm=0.1, norm_type=2))
+lr_config = dict(policy='step', step=[100])
+runner = dict(type='EpochBasedRunner', max_epochs=650)
+work_dir = './work_dirs/detr_r50_8x2_150e_coco'
+gpu_ids = range(0, 2)
+
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/cnn/bricks/transformer.py:348: UserWarning: The arguments `feedforward_channels` in BaseTransformerLayer has been deprecated, now you should set `feedforward_channels` and other FFN related arguments to a dict named `ffn_cfgs`. 
+  f'The arguments `{ori_name}` in BaseTransformerLayer '
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/cnn/bricks/transformer.py:348: UserWarning: The arguments `ffn_dropout` in BaseTransformerLayer has been deprecated, now you should set `ffn_drop` and other FFN related arguments to a dict named `ffn_cfgs`. 
+  f'The arguments `{ori_name}` in BaseTransformerLayer '
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/cnn/bricks/transformer.py:91: UserWarning: The arguments `dropout` in MultiheadAttention has been deprecated, now you can separately set `attn_drop`(float), proj_drop(float), and `dropout_layer`(dict) 
+  warnings.warn('The arguments `dropout` in MultiheadAttention '
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/cnn/bricks/transformer.py:348: UserWarning: The arguments `ffn_num_fcs` in BaseTransformerLayer has been deprecated, now you should set `num_fcs` and other FFN related arguments to a dict named `ffn_cfgs`. 
+  f'The arguments `{ori_name}` in BaseTransformerLayer '
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/utils/misc.py:324: UserWarning: "dropout" is deprecated in `FFN.__init__`, please use "ffn_drop" instead
+  f'"{src_arg_name}" is deprecated in '
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/utils/misc.py:324: UserWarning: "add_residual" is deprecated in `FFN.__init__`, please use "add_identity" instead
+  f'"{src_arg_name}" is deprecated in '
+2021-10-11 20:50:02,331 - mmcv - INFO - load model from: torchvision://resnet50
+2021-10-11 20:50:02,331 - mmcv - INFO - Use load_from_torchvision loader
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/cnn/bricks/transformer.py:348: UserWarning: The arguments `feedforward_channels` in BaseTransformerLayer has been deprecated, now you should set `feedforward_channels` and other FFN related arguments to a dict named `ffn_cfgs`. 
+  f'The arguments `{ori_name}` in BaseTransformerLayer '
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/cnn/bricks/transformer.py:348: UserWarning: The arguments `ffn_dropout` in BaseTransformerLayer has been deprecated, now you should set `ffn_drop` and other FFN related arguments to a dict named `ffn_cfgs`. 
+  f'The arguments `{ori_name}` in BaseTransformerLayer '
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/cnn/bricks/transformer.py:91: UserWarning: The arguments `dropout` in MultiheadAttention has been deprecated, now you can separately set `attn_drop`(float), proj_drop(float), and `dropout_layer`(dict) 
+  warnings.warn('The arguments `dropout` in MultiheadAttention '
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/cnn/bricks/transformer.py:348: UserWarning: The arguments `ffn_num_fcs` in BaseTransformerLayer has been deprecated, now you should set `num_fcs` and other FFN related arguments to a dict named `ffn_cfgs`. 
+  f'The arguments `{ori_name}` in BaseTransformerLayer '
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/utils/misc.py:324: UserWarning: "dropout" is deprecated in `FFN.__init__`, please use "ffn_drop" instead
+  f'"{src_arg_name}" is deprecated in '
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/mmcv/utils/misc.py:324: UserWarning: "add_residual" is deprecated in `FFN.__init__`, please use "add_identity" instead
+  f'"{src_arg_name}" is deprecated in '
+[W ProcessGroupNCCL.cpp:1569] Rank 1 using best-guess GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device.
+[W ProcessGroupNCCL.cpp:1569] Rank 0 using best-guess GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device.
+2021-10-11 20:50:13,509 - mmcv - WARNING - The model and loaded state dict do not match exactly
+
+unexpected key in source state_dict: fc.weight, fc.bias
+
+loading annotations into memory...
+loading annotations into memory...
+Done (t=0.52s)
+creating index...
+index created!
+Done (t=0.46s)
+creating index...
+index created!
+fatal: not a git repository (or any of the parent directories): .git
+fatal: not a git repository (or any of the parent directories): .git
+loading annotations into memory...
+loading annotations into memory...
+Done (t=0.69s)
+creating index...
+Done (t=0.84s)
+creating index...
+index created!
+index created!
+2021-10-11 20:50:15,926 - mmdet - INFO - load checkpoint from /root/mmdetection/work_dirs/detr_r50_8x2_150e_coco/epoch_150.pth
+2021-10-11 20:50:15,926 - mmdet - INFO - Use load_from_local loader
+2021-10-11 20:50:19,761 - mmdet - INFO - resumed epoch 140, iter 1025500
+2021-10-11 20:50:19,764 - mmdet - INFO - Start running, host: root@46052755c54b, work_dir: /root/mmdetection/work_dirs/detr_r50_8x2_150e_coco
+2021-10-11 20:50:19,765 - mmdet - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(NORMAL      ) CheckpointHook                     
+(LOW         ) DistEvalHook                       
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(NORMAL      ) DistSamplerSeedHook                
+(NORMAL      ) NumClassCheckHook                  
+(LOW         ) IterTimerHook                      
+(LOW         ) DistEvalHook                       
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(LOW         ) IterTimerHook                      
+(LOW         ) DistEvalHook                       
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) OptimizerHook                      
+(NORMAL      ) CheckpointHook                     
+(LOW         ) IterTimerHook                      
+(LOW         ) DistEvalHook                       
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) CheckpointHook                     
+(LOW         ) DistEvalHook                       
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) DistSamplerSeedHook                
+(NORMAL      ) NumClassCheckHook                  
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+2021-10-11 20:50:19,765 - mmdet - INFO - workflow: [('train', 1)], max: 650 epochs
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/torch/_tensor.py:575: UserWarning: floor_divide is deprecated, and will be removed in a future version of pytorch. It currently rounds toward 0 (like the 'trunc' function NOT 'floor'). This results in incorrect rounding for negative values.
+To keep the current behavior, use torch.div(a, b, rounding_mode='trunc'), or for actual floor division, use torch.div(a, b, rounding_mode='floor'). (Triggered internally at  /opt/conda/conda-bld/pytorch_1631630742027/work/aten/src/ATen/native/BinaryOps.cpp:467.)
+  return torch.floor_divide(self, other)
+/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/torch/_tensor.py:575: UserWarning: floor_divide is deprecated, and will be removed in a future version of pytorch. It currently rounds toward 0 (like the 'trunc' function NOT 'floor'). This results in incorrect rounding for negative values.
+To keep the current behavior, use torch.div(a, b, rounding_mode='trunc'), or for actual floor division, use torch.div(a, b, rounding_mode='floor'). (Triggered internally at  /opt/conda/conda-bld/pytorch_1631630742027/work/aten/src/ATen/native/BinaryOps.cpp:467.)
+  return torch.floor_divide(self, other)
+/root/mmdetection/mmdet/models/losses/cross_entropy_loss.py:239: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than tensor.new_tensor(sourceTensor).
+  self.class_weight, device=cls_score.device)
+/root/mmdetection/mmdet/models/losses/cross_entropy_loss.py:239: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than tensor.new_tensor(sourceTensor).
+  self.class_weight, device=cls_score.device)
+2021-10-11 20:50:23,868 - mmcv - INFO - Reducer buckets have been rebuilt in this iteration.
+2021-10-11 20:50:42,080 - mmdet - INFO - Epoch [141][50/7325]	lr: 1.000e-06, eta: 19 days, 6:47:36, time: 0.446, data_time: 0.141, memory: 2646, loss_cls: 0.0175, loss_bbox: 0.1073, loss_iou: 0.2589, d0.loss_cls: 0.0828, d0.loss_bbox: 0.1289, d0.loss_iou: 0.3132, d1.loss_cls: 0.0533, d1.loss_bbox: 0.1181, d1.loss_iou: 0.2851, d2.loss_cls: 0.0238, d2.loss_bbox: 0.1110, d2.loss_iou: 0.2708, d3.loss_cls: 0.0207, d3.loss_bbox: 0.1075, d3.loss_iou: 0.2554, d4.loss_cls: 0.0185, d4.loss_bbox: 0.1053, d4.loss_iou: 0.2518, loss: 2.5299, grad_norm: 215.8363
+2021-10-11 20:51:00,136 - mmdet - INFO - Epoch [141][100/7325]	lr: 1.000e-06, eta: 17 days, 10:43:41, time: 0.361, data_time: 0.080, memory: 2646, loss_cls: 0.0247, loss_bbox: 0.1189, loss_iou: 0.2704, d0.loss_cls: 0.1062, d0.loss_bbox: 0.1362, d0.loss_iou: 0.3197, d1.loss_cls: 0.0637, d1.loss_bbox: 0.1251, d1.loss_iou: 0.2943, d2.loss_cls: 0.0284, d2.loss_bbox: 0.1233, d2.loss_iou: 0.2883, d3.loss_cls: 0.0234, d3.loss_bbox: 0.1208, d3.loss_iou: 0.2750, d4.loss_cls: 0.0228, d4.loss_bbox: 0.1181, d4.loss_iou: 0.2743, loss: 2.7335, grad_norm: 213.1949
+2021-10-11 20:51:18,291 - mmdet - INFO - Epoch [141][150/7325]	lr: 1.000e-06, eta: 16 days, 20:44:17, time: 0.363, data_time: 0.082, memory: 2646, loss_cls: 0.0319, loss_bbox: 0.1098, loss_iou: 0.2603, d0.loss_cls: 0.1228, d0.loss_bbox: 0.1305, d0.loss_iou: 0.3093, d1.loss_cls: 0.0648, d1.loss_bbox: 0.1177, d1.loss_iou: 0.2845, d2.loss_cls: 0.0442, d2.loss_bbox: 0.1147, d2.loss_iou: 0.2706, d3.loss_cls: 0.0338, d3.loss_bbox: 0.1199, d3.loss_iou: 0.2798, d4.loss_cls: 0.0270, d4.loss_bbox: 0.1117, d4.loss_iou: 0.2671, loss: 2.7003, grad_norm: 238.4191
+2021-10-11 20:51:36,861 - mmdet - INFO - Epoch [141][200/7325]	lr: 1.000e-06, eta: 16 days, 15:54:02, time: 0.371, data_time: 0.090, memory: 2646, loss_cls: 0.0196, loss_bbox: 0.1057, loss_iou: 0.2692, d0.loss_cls: 0.1108, d0.loss_bbox: 0.1235, d0.loss_iou: 0.3199, d1.loss_cls: 0.0558, d1.loss_bbox: 0.1088, d1.loss_iou: 0.2879, d2.loss_cls: 0.0255, d2.loss_bbox: 0.1075, d2.loss_iou: 0.2773, d3.loss_cls: 0.0209, d3.loss_bbox: 0.1058, d3.loss_iou: 0.2701, d4.loss_cls: 0.0211, d4.loss_bbox: 0.1025, d4.loss_iou: 0.2619, loss: 2.5939, grad_norm: 200.7160
+2021-10-11 20:51:55,324 - mmdet - INFO - Epoch [141][250/7325]	lr: 1.000e-06, eta: 16 days, 12:29:02, time: 0.369, data_time: 0.084, memory: 2646, loss_cls: 0.0056, loss_bbox: 0.1094, loss_iou: 0.2544, d0.loss_cls: 0.0575, d0.loss_bbox: 0.1263, d0.loss_iou: 0.3046, d1.loss_cls: 0.0255, d1.loss_bbox: 0.1140, d1.loss_iou: 0.2706, d2.loss_cls: 0.0073, d2.loss_bbox: 0.1134, d2.loss_iou: 0.2663, d3.loss_cls: 0.0048, d3.loss_bbox: 0.1126, d3.loss_iou: 0.2653, d4.loss_cls: 0.0055, d4.loss_bbox: 0.1086, d4.loss_iou: 0.2568, loss: 2.4087, grad_norm: 210.2735
+2021-10-11 20:52:13,547 - mmdet - INFO - Epoch [141][300/7325]	lr: 1.000e-06, eta: 16 days, 9:28:20, time: 0.365, data_time: 0.083, memory: 2646, loss_cls: 0.0053, loss_bbox: 0.1038, loss_iou: 0.2537, d0.loss_cls: 0.0901, d0.loss_bbox: 0.1211, d0.loss_iou: 0.2974, d1.loss_cls: 0.0470, d1.loss_bbox: 0.1107, d1.loss_iou: 0.2706, d2.loss_cls: 0.0103, d2.loss_bbox: 0.1096, d2.loss_iou: 0.2653, d3.loss_cls: 0.0064, d3.loss_bbox: 0.1052, d3.loss_iou: 0.2578, d4.loss_cls: 0.0058, d4.loss_bbox: 0.1052, d4.loss_iou: 0.2596, loss: 2.4250, grad_norm: 225.6152
+2021-10-11 20:52:32,061 - mmdet - INFO - Epoch [141][350/7325]	lr: 1.000e-06, eta: 16 days, 8:08:34, time: 0.370, data_time: 0.085, memory: 2646, loss_cls: 0.0194, loss_bbox: 0.0959, loss_iou: 0.2373, d0.loss_cls: 0.0663, d0.loss_bbox: 0.1265, d0.loss_iou: 0.2994, d1.loss_cls: 0.0497, d1.loss_bbox: 0.1058, d1.loss_iou: 0.2566, d2.loss_cls: 0.0234, d2.loss_bbox: 0.1027, d2.loss_iou: 0.2486, d3.loss_cls: 0.0231, d3.loss_bbox: 0.1009, d3.loss_iou: 0.2448, d4.loss_cls: 0.0210, d4.loss_bbox: 0.0986, d4.loss_iou: 0.2404, loss: 2.3604, grad_norm: 207.1112
+2021-10-11 20:52:50,521 - mmdet - INFO - Epoch [141][400/7325]	lr: 1.000e-06, eta: 16 days, 7:00:14, time: 0.369, data_time: 0.087, memory: 2646, loss_cls: 0.0250, loss_bbox: 0.1051, loss_iou: 0.2666, d0.loss_cls: 0.1053, d0.loss_bbox: 0.1252, d0.loss_iou: 0.3152, d1.loss_cls: 0.0704, d1.loss_bbox: 0.1097, d1.loss_iou: 0.2798, d2.loss_cls: 0.0425, d2.loss_bbox: 0.1064, d2.loss_iou: 0.2683, d3.loss_cls: 0.0309, d3.loss_bbox: 0.1056, d3.loss_iou: 0.2664, d4.loss_cls: 0.0327, d4.loss_bbox: 0.1028, d4.loss_iou: 0.2647, loss: 2.6226, grad_norm: 204.8712
+2021-10-11 20:53:08,682 - mmdet - INFO - Epoch [141][450/7325]	lr: 1.000e-06, eta: 16 days, 5:25:51, time: 0.363, data_time: 0.094, memory: 2646, loss_cls: 0.0136, loss_bbox: 0.0969, loss_iou: 0.2585, d0.loss_cls: 0.0854, d0.loss_bbox: 0.1195, d0.loss_iou: 0.3136, d1.loss_cls: 0.0491, d1.loss_bbox: 0.1054, d1.loss_iou: 0.2789, d2.loss_cls: 0.0255, d2.loss_bbox: 0.1009, d2.loss_iou: 0.2670, d3.loss_cls: 0.0178, d3.loss_bbox: 0.0984, d3.loss_iou: 0.2607, d4.loss_cls: 0.0134, d4.loss_bbox: 0.0981, d4.loss_iou: 0.2610, loss: 2.4638, grad_norm: 197.2767
+ERROR:torch.distributed.elastic.multiprocessing.api:failed (exitcode: -9) local_rank: 1 (pid: 6300) of binary: /root/anaconda3/envs/openmmlab/bin/python
+Traceback (most recent call last):
+  File "/root/anaconda3/envs/openmmlab/lib/python3.7/runpy.py", line 193, in _run_module_as_main
+    "__main__", mod_spec)
+  File "/root/anaconda3/envs/openmmlab/lib/python3.7/runpy.py", line 85, in _run_code
+    exec(code, run_globals)
+  File "/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/torch/distributed/launch.py", line 193, in <module>
+    main()
+  File "/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/torch/distributed/launch.py", line 189, in main
+    launch(args)
+  File "/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/torch/distributed/launch.py", line 174, in launch
+    run(args)
+  File "/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/torch/distributed/run.py", line 692, in run
+    )(*cmd_args)
+  File "/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/torch/distributed/launcher/api.py", line 116, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/root/anaconda3/envs/openmmlab/lib/python3.7/site-packages/torch/distributed/launcher/api.py", line 246, in launch_agent
+    failures=result.failures,
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+************************************************
+            ./tools/train.py FAILED             
+================================================
+Root Cause:
+[0]:
+  time: 2021-10-11_20:53:19
+  rank: 1 (local_rank: 1)
+  exitcode: -9 (pid: 6300)
+  error_file: <N/A>
+  msg: "Signal 9 (SIGKILL) received by PID 6300"
+================================================
+Other Failures:
+  <NO_OTHER_FAILURES>
+************************************************
+

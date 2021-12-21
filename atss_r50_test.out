@@ -1,0 +1,485 @@
+/root/anaconda3/envs/origin/lib/python3.7/site-packages/torch/distributed/launch.py:186: FutureWarning: The module torch.distributed.launch is deprecated
+and will be removed in future. Use torch.distributed.run.
+Note that --use_env is set by default in torch.distributed.run.
+If your script expects `--local_rank` argument to be set, please
+change it to read from `os.environ['LOCAL_RANK']` instead. See 
+https://pytorch.org/docs/stable/distributed.html#launch-utility for 
+further instructions
+
+  FutureWarning,
+WARNING:torch.distributed.run:*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+2021-11-11 09:01:00,228 - mmdet - INFO - Environment info:
+------------------------------------------------------------
+sys.platform: linux
+Python: 3.7.11 (default, Jul 27 2021, 14:32:16) [GCC 7.5.0]
+CUDA available: True
+GPU 0,1,2,3,4: GeForce GTX 1080 Ti
+GPU 5,6: GeForce GTX 1080
+CUDA_HOME: /usr/local/cuda
+NVCC: Cuda compilation tools, release 10.1, V10.1.243
+GCC: gcc (Ubuntu 7.4.0-1ubuntu1~18.04.1) 7.4.0
+PyTorch: 1.9.1
+PyTorch compiling details: PyTorch built with:
+  - GCC 7.3
+  - C++ Version: 201402
+  - Intel(R) oneAPI Math Kernel Library Version 2021.3-Product Build 20210617 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.1.2 (Git Hash 98be7e8afa711dc9b66c8ff3504129cb82013cdb)
+  - OpenMP 201511 (a.k.a. OpenMP 4.5)
+  - NNPACK is enabled
+  - CPU capability usage: AVX2
+  - CUDA Runtime 10.2
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_37,code=compute_37
+  - CuDNN 7.6.5
+  - Magma 2.5.2
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=10.2, CUDNN_VERSION=7.6.5, CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/c++, CXX_FLAGS= -Wno-deprecated -fvisibility-inlines-hidden -DUSE_PTHREADPOOL -fopenmp -DNDEBUG -DUSE_KINETO -DUSE_FBGEMM -DUSE_QNNPACK -DUSE_PYTORCH_QNNPACK -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -O2 -fPIC -Wno-narrowing -Wall -Wextra -Werror=return-type -Wno-missing-field-initializers -Wno-type-limits -Wno-array-bounds -Wno-unknown-pragmas -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -Wno-unused-result -Wno-unused-local-typedefs -Wno-strict-overflow -Wno-strict-aliasing -Wno-error=deprecated-declarations -Wno-stringop-overflow -Wno-psabi -Wno-error=pedantic -Wno-error=redundant-decls -Wno-error=old-style-cast -fdiagnostics-color=always -faligned-new -Wno-unused-but-set-variable -Wno-maybe-uninitialized -fno-math-errno -fno-trapping-math -Werror=format -Wno-stringop-overflow, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=1.9.1, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=ON, USE_MPI=OFF, USE_NCCL=ON, USE_NNPACK=ON, USE_OPENMP=ON, 
+
+TorchVision: 0.10.1
+OpenCV: 4.5.4-dev
+MMCV: 1.3.9
+MMCV Compiler: GCC 7.3
+MMCV CUDA Compiler: 10.2
+MMDetection: 2.16.0+unknown
+------------------------------------------------------------
+
+2021-11-11 09:01:01,022 - mmdet - INFO - Distributed training: True
+2021-11-11 09:01:01,762 - mmdet - INFO - Config:
+dataset_type = 'CocoDataset'
+data_root = '/ayb/UVM_Datasets/'
+img_norm_cfg = dict(
+    mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations', with_bbox=True),
+    dict(type='Resize', img_scale=(1333, 800), keep_ratio=True),
+    dict(type='RandomFlip', flip_ratio=0.5),
+    dict(
+        type='Normalize',
+        mean=[123.675, 116.28, 103.53],
+        std=[58.395, 57.12, 57.375],
+        to_rgb=True),
+    dict(type='Pad', size_divisor=32),
+    dict(type='DefaultFormatBundle'),
+    dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+]
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(
+        type='MultiScaleFlipAug',
+        img_scale=(1333, 800),
+        flip=False,
+        transforms=[
+            dict(type='Resize', keep_ratio=True),
+            dict(type='RandomFlip'),
+            dict(
+                type='Normalize',
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
+                to_rgb=True),
+            dict(type='Pad', size_divisor=32),
+            dict(type='ImageToTensor', keys=['img']),
+            dict(type='Collect', keys=['img'])
+        ])
+]
+data = dict(
+    samples_per_gpu=1,
+    workers_per_gpu=2,
+    train=dict(
+        type='CocoDataset',
+        ann_file='/ayb/UVM_Datasets/voc_train3.json',
+        img_prefix='/ayb/UVM_Datasets/voc8/VOCdevkit/VOC2007/JPEGImages',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='LoadAnnotations', with_bbox=True),
+            dict(type='Resize', img_scale=(1333, 800), keep_ratio=True),
+            dict(type='RandomFlip', flip_ratio=0.5),
+            dict(
+                type='Normalize',
+                mean=[123.675, 116.28, 103.53],
+                std=[58.395, 57.12, 57.375],
+                to_rgb=True),
+            dict(type='Pad', size_divisor=32),
+            dict(type='DefaultFormatBundle'),
+            dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels'])
+        ]),
+    val=dict(
+        type='CocoDataset',
+        ann_file='/ayb/UVM_Datasets/voc_valid3.json',
+        img_prefix='/ayb/UVM_Datasets/voc8/VOCdevkit/VOC2007/JPEGImages',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(
+                type='MultiScaleFlipAug',
+                img_scale=(1333, 800),
+                flip=False,
+                transforms=[
+                    dict(type='Resize', keep_ratio=True),
+                    dict(type='RandomFlip'),
+                    dict(
+                        type='Normalize',
+                        mean=[123.675, 116.28, 103.53],
+                        std=[58.395, 57.12, 57.375],
+                        to_rgb=True),
+                    dict(type='Pad', size_divisor=32),
+                    dict(type='ImageToTensor', keys=['img']),
+                    dict(type='Collect', keys=['img'])
+                ])
+        ]),
+    test=dict(
+        type='CocoDataset',
+        ann_file='/ayb/UVM_Datasets/voc_test3.json',
+        img_prefix='/ayb/UVM_Datasets/voc8/VOCdevkit/VOC2007/JPEGImages',
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(
+                type='MultiScaleFlipAug',
+                img_scale=(1333, 800),
+                flip=False,
+                transforms=[
+                    dict(type='Resize', keep_ratio=True),
+                    dict(type='RandomFlip'),
+                    dict(
+                        type='Normalize',
+                        mean=[123.675, 116.28, 103.53],
+                        std=[58.395, 57.12, 57.375],
+                        to_rgb=True),
+                    dict(type='Pad', size_divisor=32),
+                    dict(type='ImageToTensor', keys=['img']),
+                    dict(type='Collect', keys=['img'])
+                ])
+        ]))
+evaluation = dict(interval=10, metric='bbox')
+optimizer = dict(type='SGD', lr=0.001, momentum=0.9, weight_decay=0.0001)
+optimizer_config = dict(grad_clip=None)
+lr_config = dict(
+    policy='step',
+    warmup='linear',
+    warmup_iters=500,
+    warmup_ratio=0.001,
+    step=[8, 11])
+runner = dict(type='EpochBasedRunner', max_epochs=500)
+checkpoint_config = dict(interval=1)
+log_config = dict(interval=50, hooks=[dict(type='TextLoggerHook')])
+custom_hooks = [dict(type='NumClassCheckHook')]
+dist_params = dict(backend='nccl')
+log_level = 'INFO'
+load_from = None
+resume_from = None
+workflow = [('train', 1)]
+model = dict(
+    type='ATSS',
+    backbone=dict(
+        type='LDRNConcat',
+        encoder='MobileNetV2',
+        lv6=False,
+        act='RELU',
+        norm='BN',
+        rank=0,
+        max_depth=1),
+    neck=dict(
+        type='FPN',
+        in_channels=[256, 512, 1024, 2048],
+        out_channels=256,
+        start_level=1,
+        add_extra_convs='on_output',
+        num_outs=5),
+    bbox_head=dict(
+        type='ATSSHead',
+        num_classes=10,
+        in_channels=256,
+        stacked_convs=4,
+        feat_channels=256,
+        anchor_generator=dict(
+            type='AnchorGenerator',
+            ratios=[1.0],
+            octave_base_scale=8,
+            scales_per_octave=1,
+            strides=[8, 16, 32, 64, 128]),
+        bbox_coder=dict(
+            type='DeltaXYWHBBoxCoder',
+            target_means=[0.0, 0.0, 0.0, 0.0],
+            target_stds=[0.1, 0.1, 0.2, 0.2]),
+        loss_cls=dict(
+            type='FocalLoss',
+            use_sigmoid=True,
+            gamma=2.0,
+            alpha=0.25,
+            loss_weight=1.0),
+        loss_bbox=dict(type='GIoULoss', loss_weight=2.0),
+        loss_centerness=dict(
+            type='CrossEntropyLoss', use_sigmoid=True, loss_weight=1.0)),
+    train_cfg=dict(
+        assigner=dict(type='ATSSAssigner', topk=9),
+        allowed_border=-1,
+        pos_weight=-1,
+        debug=False),
+    test_cfg=dict(
+        nms_pre=1000,
+        min_bbox_size=0,
+        score_thr=0.05,
+        nms=dict(type='nms', iou_threshold=0.6),
+        max_per_img=100))
+work_dir = '/root/origin/work_dirs/atss_r50_test'
+gpu_ids = range(0, 7)
+
+/root/origin/mmdet/core/anchor/builder.py:17: UserWarning: ``build_anchor_generator`` would be deprecated soon, please use ``build_prior_generator`` 
+  '``build_anchor_generator`` would be deprecated soon, please use '
+/root/origin/mmdet/core/anchor/builder.py:17: UserWarning: ``build_anchor_generator`` would be deprecated soon, please use ``build_prior_generator`` 
+  '``build_anchor_generator`` would be deprecated soon, please use '
+/root/origin/mmdet/core/anchor/builder.py:17: UserWarning: ``build_anchor_generator`` would be deprecated soon, please use ``build_prior_generator`` 
+  '``build_anchor_generator`` would be deprecated soon, please use '
+/root/origin/mmdet/core/anchor/builder.py:17: UserWarning: ``build_anchor_generator`` would be deprecated soon, please use ``build_prior_generator`` 
+  '``build_anchor_generator`` would be deprecated soon, please use '
+/root/origin/mmdet/core/anchor/builder.py:17: UserWarning: ``build_anchor_generator`` would be deprecated soon, please use ``build_prior_generator`` 
+  '``build_anchor_generator`` would be deprecated soon, please use '
+/root/origin/mmdet/core/anchor/builder.py:17: UserWarning: ``build_anchor_generator`` would be deprecated soon, please use ``build_prior_generator`` 
+  '``build_anchor_generator`` would be deprecated soon, please use '
+loading annotations into memory...
+loading annotations into memory...
+loading annotations into memory...
+loading annotations into memory...
+loading annotations into memory...
+loading annotations into memory...
+/root/origin/mmdet/core/anchor/builder.py:17: UserWarning: ``build_anchor_generator`` would be deprecated soon, please use ``build_prior_generator`` 
+  '``build_anchor_generator`` would be deprecated soon, please use '
+loading annotations into memory...
+Done (t=0.70s)
+creating index...
+index created!
+Done (t=0.68s)
+creating index...
+Done (t=0.66s)
+creating index...
+Done (t=0.65s)
+creating index...
+Done (t=0.74s)
+creating index...
+Done (t=0.64s)
+creating index...
+index created!
+index created!
+index created!
+index created!
+index created!
+Done (t=0.81s)
+creating index...
+index created!
+loading annotations into memory...
+loading annotations into memory...
+loading annotations into memory...
+loading annotations into memory...
+loading annotations into memory...
+loading annotations into memory...
+loading annotations into memory...
+Done (t=0.92s)
+creating index...
+Done (t=0.94s)
+creating index...
+Done (t=0.93s)
+creating index...
+Done (t=0.95s)
+creating index...
+Done (t=0.94s)
+creating index...
+Done (t=0.95s)
+creating index...
+Done (t=0.96s)
+creating index...
+index created!
+index created!
+index created!
+index created!
+index created!
+index created!
+index created!
+2021-11-11 09:01:15,761 - mmdet - INFO - Start running, host: root@4f546d183e26, work_dir: /root/origin/work_dirs/atss_r50_test
+2021-11-11 09:01:15,762 - mmdet - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(NORMAL      ) CheckpointHook                     
+(LOW         ) DistEvalHook                       
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(NORMAL      ) DistSamplerSeedHook                
+(NORMAL      ) NumClassCheckHook                  
+(LOW         ) IterTimerHook                      
+(LOW         ) DistEvalHook                       
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) StepLrUpdaterHook                  
+(LOW         ) IterTimerHook                      
+(LOW         ) DistEvalHook                       
+ -------------------- 
+after_train_iter:
+(ABOVE_NORMAL) OptimizerHook                      
+(NORMAL      ) CheckpointHook                     
+(LOW         ) IterTimerHook                      
+(LOW         ) DistEvalHook                       
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) CheckpointHook                     
+(LOW         ) DistEvalHook                       
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) DistSamplerSeedHook                
+(NORMAL      ) NumClassCheckHook                  
+(LOW         ) IterTimerHook                      
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+before_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(LOW         ) IterTimerHook                      
+ -------------------- 
+after_val_epoch:
+(VERY_LOW    ) TextLoggerHook                     
+ -------------------- 
+2021-11-11 09:01:15,762 - mmdet - INFO - workflow: [('train', 1)], max: 500 epochs
+/root/origin/mmdet/core/anchor/anchor_generator.py:324: UserWarning: ``grid_anchors`` would be deprecated soon. Please use ``grid_priors`` 
+  warnings.warn('``grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:361: UserWarning: ``single_level_grid_anchors`` would be deprecated soon. Please use ``single_level_grid_priors`` 
+  '``single_level_grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:324: UserWarning: ``grid_anchors`` would be deprecated soon. Please use ``grid_priors`` 
+  warnings.warn('``grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:361: UserWarning: ``single_level_grid_anchors`` would be deprecated soon. Please use ``single_level_grid_priors`` 
+  '``single_level_grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:324: UserWarning: ``grid_anchors`` would be deprecated soon. Please use ``grid_priors`` 
+  warnings.warn('``grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:361: UserWarning: ``single_level_grid_anchors`` would be deprecated soon. Please use ``single_level_grid_priors`` 
+  '``single_level_grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:324: UserWarning: ``grid_anchors`` would be deprecated soon. Please use ``grid_priors`` 
+  warnings.warn('``grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:361: UserWarning: ``single_level_grid_anchors`` would be deprecated soon. Please use ``single_level_grid_priors`` 
+  '``single_level_grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:324: UserWarning: ``grid_anchors`` would be deprecated soon. Please use ``grid_priors`` 
+  warnings.warn('``grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:361: UserWarning: ``single_level_grid_anchors`` would be deprecated soon. Please use ``single_level_grid_priors`` 
+  '``single_level_grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:324: UserWarning: ``grid_anchors`` would be deprecated soon. Please use ``grid_priors`` 
+  warnings.warn('``grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:361: UserWarning: ``single_level_grid_anchors`` would be deprecated soon. Please use ``single_level_grid_priors`` 
+  '``single_level_grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:324: UserWarning: ``grid_anchors`` would be deprecated soon. Please use ``grid_priors`` 
+  warnings.warn('``grid_anchors`` would be deprecated soon. '
+/root/origin/mmdet/core/anchor/anchor_generator.py:361: UserWarning: ``single_level_grid_anchors`` would be deprecated soon. Please use ``single_level_grid_priors`` 
+  '``single_level_grid_anchors`` would be deprecated soon. '
+2021-11-11 09:01:53,621 - mmcv - INFO - Reducer buckets have been rebuilt in this iteration.
+2021-11-11 09:02:18,866 - mmdet - INFO - Epoch [1][50/2093]	lr: 9.890e-05, eta: 15 days, 6:31:10, time: 1.261, data_time: 0.653, memory: 1862, loss_cls: 0.9930, loss_bbox: 0.8497, loss_centerness: 0.6300, loss: 2.4727
+2021-11-11 09:02:45,125 - mmdet - INFO - Epoch [1][100/2093]	lr: 1.988e-04, eta: 10 days, 19:31:11, time: 0.525, data_time: 0.015, memory: 1862, loss_cls: 0.6284, loss_bbox: 0.6790, loss_centerness: 0.6153, loss: 1.9228
+2021-11-11 09:03:12,369 - mmdet - INFO - Epoch [1][150/2093]	lr: 2.987e-04, eta: 9 days, 9:45:38, time: 0.545, data_time: 0.015, memory: 1862, loss_cls: 0.4778, loss_bbox: 0.6379, loss_centerness: 0.6114, loss: 1.7271
+2021-11-11 09:03:38,859 - mmdet - INFO - Epoch [1][200/2093]	lr: 3.986e-04, eta: 8 days, 15:48:08, time: 0.530, data_time: 0.014, memory: 1862, loss_cls: 0.4260, loss_bbox: 0.5762, loss_centerness: 0.6108, loss: 1.6130
+2021-11-11 09:04:05,585 - mmdet - INFO - Epoch [1][250/2093]	lr: 4.985e-04, eta: 8 days, 5:16:22, time: 0.534, data_time: 0.018, memory: 1862, loss_cls: 0.3960, loss_bbox: 0.5584, loss_centerness: 0.6100, loss: 1.5644
+2021-11-11 09:04:31,990 - mmdet - INFO - Epoch [1][300/2093]	lr: 5.984e-04, eta: 7 days, 22:01:33, time: 0.529, data_time: 0.017, memory: 1862, loss_cls: 0.3622, loss_bbox: 0.5346, loss_centerness: 0.6103, loss: 1.5071
+2021-11-11 09:04:58,597 - mmdet - INFO - Epoch [1][350/2093]	lr: 6.983e-04, eta: 7 days, 16:49:14, time: 0.529, data_time: 0.014, memory: 1862, loss_cls: 0.3443, loss_bbox: 0.5066, loss_centerness: 0.6065, loss: 1.4574
+2021-11-11 09:05:26,001 - mmdet - INFO - Epoch [1][400/2093]	lr: 7.982e-04, eta: 7 days, 13:44:35, time: 0.552, data_time: 0.019, memory: 1862, loss_cls: 0.3152, loss_bbox: 0.4932, loss_centerness: 0.6082, loss: 1.4166
+2021-11-11 09:05:53,247 - mmdet - INFO - Epoch [1][450/2093]	lr: 8.981e-04, eta: 7 days, 11:07:19, time: 0.545, data_time: 0.014, memory: 1862, loss_cls: 0.3028, loss_bbox: 0.4741, loss_centerness: 0.6042, loss: 1.3811
+2021-11-11 09:06:19,844 - mmdet - INFO - Epoch [1][500/2093]	lr: 9.980e-04, eta: 7 days, 8:39:44, time: 0.532, data_time: 0.014, memory: 1862, loss_cls: 0.3116, loss_bbox: 0.4710, loss_centerness: 0.6062, loss: 1.3888
+2021-11-11 09:06:46,769 - mmdet - INFO - Epoch [1][550/2093]	lr: 1.000e-03, eta: 7 days, 6:46:48, time: 0.537, data_time: 0.014, memory: 1862, loss_cls: 0.2773, loss_bbox: 0.4540, loss_centerness: 0.6027, loss: 1.3341
+2021-11-11 09:07:14,499 - mmdet - INFO - Epoch [1][600/2093]	lr: 1.000e-03, eta: 7 days, 5:37:59, time: 0.555, data_time: 0.016, memory: 1862, loss_cls: 0.2717, loss_bbox: 0.4457, loss_centerness: 0.6031, loss: 1.3205
+2021-11-11 09:07:42,109 - mmdet - INFO - Epoch [1][650/2093]	lr: 1.000e-03, eta: 7 days, 4:37:18, time: 0.553, data_time: 0.017, memory: 1862, loss_cls: 0.2612, loss_bbox: 0.4402, loss_centerness: 0.6032, loss: 1.3045
+2021-11-11 09:08:09,303 - mmdet - INFO - Epoch [1][700/2093]	lr: 1.000e-03, eta: 7 days, 3:33:26, time: 0.543, data_time: 0.014, memory: 1862, loss_cls: 0.2508, loss_bbox: 0.4285, loss_centerness: 0.6019, loss: 1.2811
+2021-11-11 09:08:37,178 - mmdet - INFO - Epoch [1][750/2093]	lr: 1.000e-03, eta: 7 days, 2:54:18, time: 0.557, data_time: 0.016, memory: 1862, loss_cls: 0.2387, loss_bbox: 0.4166, loss_centerness: 0.6021, loss: 1.2574
+2021-11-11 09:09:04,487 - mmdet - INFO - Epoch [1][800/2093]	lr: 1.000e-03, eta: 7 days, 2:08:51, time: 0.547, data_time: 0.018, memory: 1862, loss_cls: 0.2391, loss_bbox: 0.4182, loss_centerness: 0.6009, loss: 1.2582
+2021-11-11 09:09:30,977 - mmdet - INFO - Epoch [1][850/2093]	lr: 1.000e-03, eta: 7 days, 1:11:36, time: 0.530, data_time: 0.018, memory: 1862, loss_cls: 0.2274, loss_bbox: 0.4161, loss_centerness: 0.6006, loss: 1.2441
+2021-11-11 09:09:58,741 - mmdet - INFO - Epoch [1][900/2093]	lr: 1.000e-03, eta: 7 days, 0:44:20, time: 0.555, data_time: 0.017, memory: 1862, loss_cls: 0.2270, loss_bbox: 0.4100, loss_centerness: 0.6011, loss: 1.2382
+2021-11-11 09:10:27,599 - mmdet - INFO - Epoch [1][950/2093]	lr: 1.000e-03, eta: 7 days, 0:39:18, time: 0.576, data_time: 0.016, memory: 1862, loss_cls: 0.2213, loss_bbox: 0.3997, loss_centerness: 0.6009, loss: 1.2218
+2021-11-11 09:10:57,266 - mmdet - INFO - Exp name: atss_r50_fpn_1x_coco.py
+2021-11-11 09:10:57,266 - mmdet - INFO - Epoch [1][1000/2093]	lr: 1.000e-03, eta: 7 days, 0:47:36, time: 0.591, data_time: 0.018, memory: 1862, loss_cls: 0.2177, loss_bbox: 0.3986, loss_centerness: 0.6019, loss: 1.2182
+2021-11-11 09:11:26,618 - mmdet - INFO - Epoch [1][1050/2093]	lr: 1.000e-03, eta: 7 days, 0:54:23, time: 0.590, data_time: 0.025, memory: 1862, loss_cls: 0.2094, loss_bbox: 0.3861, loss_centerness: 0.5995, loss: 1.1951
+2021-11-11 09:11:56,233 - mmdet - INFO - Epoch [1][1100/2093]	lr: 1.000e-03, eta: 7 days, 1:02:03, time: 0.592, data_time: 0.020, memory: 1862, loss_cls: 0.2104, loss_bbox: 0.3865, loss_centerness: 0.6007, loss: 1.1976
+2021-11-11 09:12:26,055 - mmdet - INFO - Epoch [1][1150/2093]	lr: 1.000e-03, eta: 7 days, 1:13:45, time: 0.598, data_time: 0.022, memory: 1862, loss_cls: 0.1951, loss_bbox: 0.3796, loss_centerness: 0.6001, loss: 1.1748
+2021-11-11 09:12:56,335 - mmdet - INFO - Epoch [1][1200/2093]	lr: 1.000e-03, eta: 7 days, 1:27:45, time: 0.603, data_time: 0.017, memory: 1862, loss_cls: 0.2020, loss_bbox: 0.3887, loss_centerness: 0.5991, loss: 1.1898
+2021-11-11 09:13:26,534 - mmdet - INFO - Epoch [1][1250/2093]	lr: 1.000e-03, eta: 7 days, 1:41:42, time: 0.604, data_time: 0.020, memory: 1862, loss_cls: 0.1982, loss_bbox: 0.3695, loss_centerness: 0.5980, loss: 1.1656
+2021-11-11 09:13:56,052 - mmdet - INFO - Epoch [1][1300/2093]	lr: 1.000e-03, eta: 7 days, 1:45:59, time: 0.592, data_time: 0.022, memory: 1862, loss_cls: 0.1980, loss_bbox: 0.3643, loss_centerness: 0.5982, loss: 1.1606
+2021-11-11 09:14:26,838 - mmdet - INFO - Epoch [1][1350/2093]	lr: 1.000e-03, eta: 7 days, 2:05:27, time: 0.616, data_time: 0.026, memory: 1862, loss_cls: 0.1906, loss_bbox: 0.3640, loss_centerness: 0.5955, loss: 1.1501
+2021-11-11 09:14:56,986 - mmdet - INFO - Epoch [1][1400/2093]	lr: 1.000e-03, eta: 7 days, 2:15:55, time: 0.603, data_time: 0.019, memory: 1862, loss_cls: 0.1807, loss_bbox: 0.3576, loss_centerness: 0.5987, loss: 1.1370
+2021-11-11 09:15:27,040 - mmdet - INFO - Epoch [1][1450/2093]	lr: 1.000e-03, eta: 7 days, 2:24:37, time: 0.602, data_time: 0.021, memory: 1862, loss_cls: 0.1917, loss_bbox: 0.3751, loss_centerness: 0.5993, loss: 1.1661
+2021-11-11 09:15:57,492 - mmdet - INFO - Epoch [1][1500/2093]	lr: 1.000e-03, eta: 7 days, 2:36:06, time: 0.608, data_time: 0.018, memory: 1862, loss_cls: 0.1773, loss_bbox: 0.3491, loss_centerness: 0.5974, loss: 1.1238
+2021-11-11 09:16:28,446 - mmdet - INFO - Epoch [1][1550/2093]	lr: 1.000e-03, eta: 7 days, 2:52:25, time: 0.618, data_time: 0.023, memory: 1862, loss_cls: 0.1788, loss_bbox: 0.3553, loss_centerness: 0.5963, loss: 1.1303
+2021-11-11 09:17:00,024 - mmdet - INFO - Epoch [1][1600/2093]	lr: 1.000e-03, eta: 7 days, 3:15:33, time: 0.632, data_time: 0.022, memory: 1862, loss_cls: 0.1754, loss_bbox: 0.3498, loss_centerness: 0.5961, loss: 1.1213
+2021-11-11 09:17:30,853 - mmdet - INFO - Epoch [1][1650/2093]	lr: 1.000e-03, eta: 7 days, 3:29:23, time: 0.617, data_time: 0.020, memory: 1862, loss_cls: 0.1785, loss_bbox: 0.3529, loss_centerness: 0.5990, loss: 1.1304
+2021-11-11 09:18:01,003 - mmdet - INFO - Epoch [1][1700/2093]	lr: 1.000e-03, eta: 7 days, 3:35:53, time: 0.605, data_time: 0.019, memory: 1862, loss_cls: 0.1758, loss_bbox: 0.3416, loss_centerness: 0.5954, loss: 1.1128
+2021-11-11 09:18:33,083 - mmdet - INFO - Epoch [1][1750/2093]	lr: 1.000e-03, eta: 7 days, 3:59:37, time: 0.640, data_time: 0.022, memory: 1862, loss_cls: 0.1754, loss_bbox: 0.3491, loss_centerness: 0.5970, loss: 1.1215
+2021-11-11 09:19:02,794 - mmdet - INFO - Epoch [1][1800/2093]	lr: 1.000e-03, eta: 7 days, 3:59:14, time: 0.593, data_time: 0.016, memory: 1862, loss_cls: 0.1724, loss_bbox: 0.3462, loss_centerness: 0.5958, loss: 1.1143
+2021-11-11 09:19:34,258 - mmdet - INFO - Epoch [1][1850/2093]	lr: 1.000e-03, eta: 7 days, 4:17:08, time: 0.632, data_time: 0.019, memory: 1862, loss_cls: 0.1785, loss_bbox: 0.3495, loss_centerness: 0.5963, loss: 1.1244
+2021-11-11 09:20:04,465 - mmdet - INFO - Epoch [1][1900/2093]	lr: 1.000e-03, eta: 7 days, 4:20:54, time: 0.603, data_time: 0.019, memory: 1862, loss_cls: 0.1628, loss_bbox: 0.3271, loss_centerness: 0.5960, loss: 1.0859
+2021-11-11 09:20:34,328 - mmdet - INFO - Epoch [1][1950/2093]	lr: 1.000e-03, eta: 7 days, 4:21:47, time: 0.597, data_time: 0.018, memory: 1862, loss_cls: 0.1682, loss_bbox: 0.3379, loss_centerness: 0.5955, loss: 1.1017
+2021-11-11 09:21:04,759 - mmdet - INFO - Exp name: atss_r50_fpn_1x_coco.py
+2021-11-11 09:21:04,759 - mmdet - INFO - Epoch [1][2000/2093]	lr: 1.000e-03, eta: 7 days, 4:27:56, time: 0.609, data_time: 0.017, memory: 1862, loss_cls: 0.1671, loss_bbox: 0.3450, loss_centerness: 0.5958, loss: 1.1079
+2021-11-11 09:21:35,488 - mmdet - INFO - Epoch [1][2050/2093]	lr: 1.000e-03, eta: 7 days, 4:36:07, time: 0.615, data_time: 0.017, memory: 1862, loss_cls: 0.1613, loss_bbox: 0.3415, loss_centerness: 0.5964, loss: 1.0991
+2021-11-11 09:22:02,918 - mmdet - INFO - Saving checkpoint at 1 epochs
+2021-11-11 09:23:12,380 - mmdet - INFO - Epoch [2][50/2093]	lr: 1.000e-03, eta: 7 days, 6:11:29, time: 1.344, data_time: 0.687, memory: 1862, loss_cls: 0.1698, loss_bbox: 0.3294, loss_centerness: 0.5937, loss: 1.0930
+2021-11-11 09:23:42,374 - mmdet - INFO - Epoch [2][100/2093]	lr: 1.000e-03, eta: 7 days, 6:11:13, time: 0.601, data_time: 0.020, memory: 1862, loss_cls: 0.1617, loss_bbox: 0.3296, loss_centerness: 0.5943, loss: 1.0856
+2021-11-11 09:24:13,481 - mmdet - INFO - Epoch [2][150/2093]	lr: 1.000e-03, eta: 7 days, 6:18:43, time: 0.621, data_time: 0.020, memory: 1862, loss_cls: 0.1619, loss_bbox: 0.3414, loss_centerness: 0.5953, loss: 1.0987
+2021-11-11 09:24:45,180 - mmdet - INFO - Epoch [2][200/2093]	lr: 1.000e-03, eta: 7 days, 6:30:38, time: 0.634, data_time: 0.025, memory: 1862, loss_cls: 0.1585, loss_bbox: 0.3364, loss_centerness: 0.5933, loss: 1.0882
+2021-11-11 09:25:16,142 - mmdet - INFO - Epoch [2][250/2093]	lr: 1.000e-03, eta: 7 days, 6:37:13, time: 0.621, data_time: 0.023, memory: 1862, loss_cls: 0.1548, loss_bbox: 0.3187, loss_centerness: 0.5955, loss: 1.0690
+2021-11-11 09:25:48,182 - mmdet - INFO - Epoch [2][300/2093]	lr: 1.000e-03, eta: 7 days, 6:50:44, time: 0.641, data_time: 0.021, memory: 1862, loss_cls: 0.1628, loss_bbox: 0.3361, loss_centerness: 0.5959, loss: 1.0948
+2021-11-11 09:26:24,943 - mmdet - INFO - Epoch [2][350/2093]	lr: 1.000e-03, eta: 7 days, 7:36:43, time: 0.733, data_time: 0.028, memory: 1862, loss_cls: 0.1687, loss_bbox: 0.3317, loss_centerness: 0.5962, loss: 1.0967
+2021-11-11 09:27:02,592 - mmdet - INFO - Epoch [2][400/2093]	lr: 1.000e-03, eta: 7 days, 8:27:40, time: 0.753, data_time: 0.028, memory: 1862, loss_cls: 0.1570, loss_bbox: 0.3235, loss_centerness: 0.5958, loss: 1.0764
+2021-11-11 09:27:38,270 - mmdet - INFO - Epoch [2][450/2093]	lr: 1.000e-03, eta: 7 days, 9:03:34, time: 0.715, data_time: 0.024, memory: 1862, loss_cls: 0.1539, loss_bbox: 0.3273, loss_centerness: 0.5962, loss: 1.0774
+2021-11-11 09:28:13,675 - mmdet - INFO - Epoch [2][500/2093]	lr: 1.000e-03, eta: 7 days, 9:35:54, time: 0.708, data_time: 0.022, memory: 1862, loss_cls: 0.1596, loss_bbox: 0.3283, loss_centerness: 0.5961, loss: 1.0840
+2021-11-11 09:28:50,218 - mmdet - INFO - Epoch [2][550/2093]	lr: 1.000e-03, eta: 7 days, 10:13:42, time: 0.729, data_time: 0.025, memory: 1862, loss_cls: 0.1548, loss_bbox: 0.3261, loss_centerness: 0.5950, loss: 1.0759
+2021-11-11 09:29:25,765 - mmdet - INFO - Epoch [2][600/2093]	lr: 1.000e-03, eta: 7 days, 10:44:20, time: 0.711, data_time: 0.023, memory: 1862, loss_cls: 0.1542, loss_bbox: 0.3251, loss_centerness: 0.5958, loss: 1.0752
+2021-11-11 09:30:02,908 - mmdet - INFO - Epoch [2][650/2093]	lr: 1.000e-03, eta: 7 days, 11:24:16, time: 0.744, data_time: 0.049, memory: 1862, loss_cls: 0.1518, loss_bbox: 0.3186, loss_centerness: 0.5932, loss: 1.0636
+2021-11-11 09:30:38,583 - mmdet - INFO - Epoch [2][700/2093]	lr: 1.000e-03, eta: 7 days, 11:53:12, time: 0.713, data_time: 0.022, memory: 1862, loss_cls: 0.1585, loss_bbox: 0.3220, loss_centerness: 0.5951, loss: 1.0757
+2021-11-11 09:31:13,866 - mmdet - INFO - Epoch [2][750/2093]	lr: 1.000e-03, eta: 7 days, 12:18:29, time: 0.705, data_time: 0.022, memory: 1862, loss_cls: 0.1458, loss_bbox: 0.3217, loss_centerness: 0.5945, loss: 1.0620
+2021-11-11 09:31:49,028 - mmdet - INFO - Epoch [2][800/2093]	lr: 1.000e-03, eta: 7 days, 12:42:55, time: 0.705, data_time: 0.024, memory: 1862, loss_cls: 0.1541, loss_bbox: 0.3237, loss_centerness: 0.5947, loss: 1.0725
+2021-11-11 09:32:24,803 - mmdet - INFO - Epoch [2][850/2093]	lr: 1.000e-03, eta: 7 days, 13:08:45, time: 0.713, data_time: 0.021, memory: 1862, loss_cls: 0.1440, loss_bbox: 0.3096, loss_centerness: 0.5949, loss: 1.0485
+2021-11-11 09:33:01,630 - mmdet - INFO - Epoch [2][900/2093]	lr: 1.000e-03, eta: 7 days, 13:40:41, time: 0.737, data_time: 0.024, memory: 1862, loss_cls: 0.1452, loss_bbox: 0.3104, loss_centerness: 0.5935, loss: 1.0491
+2021-11-11 09:33:36,801 - mmdet - INFO - Epoch [2][950/2093]	lr: 1.000e-03, eta: 7 days, 14:02:41, time: 0.706, data_time: 0.023, memory: 1862, loss_cls: 0.1513, loss_bbox: 0.3238, loss_centerness: 0.5945, loss: 1.0696
+2021-11-11 09:34:13,367 - mmdet - INFO - Epoch [2][1000/2093]	lr: 1.000e-03, eta: 7 days, 14:31:15, time: 0.732, data_time: 0.023, memory: 1862, loss_cls: 0.1492, loss_bbox: 0.3158, loss_centerness: 0.5955, loss: 1.0605
+2021-11-11 09:34:48,593 - mmdet - INFO - Epoch [2][1050/2093]	lr: 1.000e-03, eta: 7 days, 14:50:58, time: 0.703, data_time: 0.022, memory: 1862, loss_cls: 0.1435, loss_bbox: 0.3171, loss_centerness: 0.5941, loss: 1.0546
+2021-11-11 09:35:26,454 - mmdet - INFO - Epoch [2][1100/2093]	lr: 1.000e-03, eta: 7 days, 15:25:12, time: 0.759, data_time: 0.020, memory: 1862, loss_cls: 0.1465, loss_bbox: 0.3233, loss_centerness: 0.5965, loss: 1.0663
+2021-11-11 09:36:06,359 - mmdet - INFO - Epoch [2][1150/2093]	lr: 1.000e-03, eta: 7 days, 16:08:15, time: 0.795, data_time: 0.021, memory: 1862, loss_cls: 0.1435, loss_bbox: 0.3217, loss_centerness: 0.5937, loss: 1.0590
+2021-11-11 09:36:44,946 - mmdet - INFO - Epoch [2][1200/2093]	lr: 1.000e-03, eta: 7 days, 16:44:10, time: 0.773, data_time: 0.024, memory: 1862, loss_cls: 0.1612, loss_bbox: 0.3261, loss_centerness: 0.5947, loss: 1.0820
+2021-11-11 09:37:17,755 - mmdet - INFO - Epoch [2][1250/2093]	lr: 1.000e-03, eta: 7 days, 16:48:51, time: 0.658, data_time: 0.019, memory: 1862, loss_cls: 0.1430, loss_bbox: 0.3068, loss_centerness: 0.5936, loss: 1.0434
+2021-11-11 09:37:47,922 - mmdet - INFO - Epoch [2][1300/2093]	lr: 1.000e-03, eta: 7 days, 16:39:19, time: 0.603, data_time: 0.016, memory: 1862, loss_cls: 0.1437, loss_bbox: 0.3127, loss_centerness: 0.5964, loss: 1.0528
+2021-11-11 09:38:18,202 - mmdet - INFO - Epoch [2][1350/2093]	lr: 1.000e-03, eta: 7 days, 16:30:31, time: 0.605, data_time: 0.019, memory: 1862, loss_cls: 0.1509, loss_bbox: 0.3129, loss_centerness: 0.5957, loss: 1.0594
+2021-11-11 09:38:47,796 - mmdet - INFO - Epoch [2][1400/2093]	lr: 1.000e-03, eta: 7 days, 16:18:45, time: 0.592, data_time: 0.018, memory: 1862, loss_cls: 0.1362, loss_bbox: 0.3090, loss_centerness: 0.5958, loss: 1.0411
+2021-11-11 09:39:17,993 - mmdet - INFO - Epoch [2][1450/2093]	lr: 1.000e-03, eta: 7 days, 16:10:49, time: 0.606, data_time: 0.020, memory: 1862, loss_cls: 0.1400, loss_bbox: 0.3107, loss_centerness: 0.5952, loss: 1.0459
+2021-11-11 09:39:47,676 - mmdet - INFO - Epoch [2][1500/2093]	lr: 1.000e-03, eta: 7 days, 15:59:55, time: 0.593, data_time: 0.017, memory: 1862, loss_cls: 0.1396, loss_bbox: 0.3041, loss_centerness: 0.5934, loss: 1.0371
+2021-11-11 09:40:18,969 - mmdet - INFO - Epoch [2][1550/2093]	lr: 1.000e-03, eta: 7 days, 15:57:04, time: 0.625, data_time: 0.020, memory: 1862, loss_cls: 0.1387, loss_bbox: 0.3177, loss_centerness: 0.5959, loss: 1.0523
+2021-11-11 09:40:49,102 - mmdet - INFO - Epoch [2][1600/2093]	lr: 1.000e-03, eta: 7 days, 15:49:14, time: 0.604, data_time: 0.018, memory: 1862, loss_cls: 0.1415, loss_bbox: 0.3054, loss_centerness: 0.5937, loss: 1.0406
+2021-11-11 09:41:19,067 - mmdet - INFO - Epoch [2][1650/2093]	lr: 1.000e-03, eta: 7 days, 15:39:58, time: 0.597, data_time: 0.016, memory: 1862, loss_cls: 0.1414, loss_bbox: 0.3027, loss_centerness: 0.5930, loss: 1.0371
+2021-11-11 09:41:48,682 - mmdet - INFO - Epoch [2][1700/2093]	lr: 1.000e-03, eta: 7 days, 15:30:13, time: 0.594, data_time: 0.019, memory: 1862, loss_cls: 0.1302, loss_bbox: 0.2949, loss_centerness: 0.5923, loss: 1.0174
+2021-11-11 09:42:18,580 - mmdet - INFO - Epoch [2][1750/2093]	lr: 1.000e-03, eta: 7 days, 15:21:21, time: 0.597, data_time: 0.017, memory: 1862, loss_cls: 0.1332, loss_bbox: 0.2986, loss_centerness: 0.5942, loss: 1.0260
+2021-11-11 09:42:49,433 - mmdet - INFO - Epoch [2][1800/2093]	lr: 1.000e-03, eta: 7 days, 15:17:26, time: 0.618, data_time: 0.018, memory: 1862, loss_cls: 0.1426, loss_bbox: 0.3073, loss_centerness: 0.5936, loss: 1.0436
+2021-11-11 09:43:19,476 - mmdet - INFO - Epoch [2][1850/2093]	lr: 1.000e-03, eta: 7 days, 15:09:48, time: 0.601, data_time: 0.019, memory: 1862, loss_cls: 0.1323, loss_bbox: 0.3037, loss_centerness: 0.5945, loss: 1.0305
+2021-11-11 09:43:49,492 - mmdet - INFO - Epoch [2][1900/2093]	lr: 1.000e-03, eta: 7 days, 15:02:34, time: 0.602, data_time: 0.019, memory: 1862, loss_cls: 0.1303, loss_bbox: 0.2992, loss_centerness: 0.5934, loss: 1.0229
+2021-11-11 09:44:19,883 - mmdet - INFO - Epoch [2][1950/2093]	lr: 1.000e-03, eta: 7 days, 14:56:42, time: 0.607, data_time: 0.018, memory: 1862, loss_cls: 0.1344, loss_bbox: 0.3023, loss_centerness: 0.5935, loss: 1.0302
+2021-11-11 09:44:49,656 - mmdet - INFO - Epoch [2][2000/2093]	lr: 1.000e-03, eta: 7 days, 14:48:02, time: 0.593, data_time: 0.016, memory: 1862, loss_cls: 0.1316, loss_bbox: 0.3033, loss_centerness: 0.5946, loss: 1.0295
+2021-11-11 09:45:20,148 - mmdet - INFO - Epoch [2][2050/2093]	lr: 1.000e-03, eta: 7 days, 14:43:06, time: 0.610, data_time: 0.021, memory: 1862, loss_cls: 0.1310, loss_bbox: 0.2945, loss_centerness: 0.5920, loss: 1.0175
+2021-11-11 09:45:46,801 - mmdet - INFO - Saving checkpoint at 2 epochs
+2021-11-11 09:46:53,666 - mmdet - INFO - Epoch [3][50/2093]	lr: 1.000e-03, eta: 7 days, 15:06:32, time: 1.293, data_time: 0.712, memory: 1862, loss_cls: 0.1379, loss_bbox: 0.3089, loss_centerness: 0.5931, loss: 1.0400
+2021-11-11 09:47:23,277 - mmdet - INFO - Epoch [3][100/2093]	lr: 1.000e-03, eta: 7 days, 14:57:47, time: 0.592, data_time: 0.022, memory: 1862, loss_cls: 0.1318, loss_bbox: 0.2928, loss_centerness: 0.5936, loss: 1.0182
+2021-11-11 09:47:53,309 - mmdet - INFO - Epoch [3][150/2093]	lr: 1.000e-03, eta: 7 days, 14:51:12, time: 0.602, data_time: 0.024, memory: 1862, loss_cls: 0.1344, loss_bbox: 0.2914, loss_centerness: 0.5932, loss: 1.0191
+2021-11-11 09:48:23,315 - mmdet - INFO - Epoch [3][200/2093]	lr: 1.000e-03, eta: 7 days, 14:44:21, time: 0.600, data_time: 0.021, memory: 1862, loss_cls: 0.1324, loss_bbox: 0.2894, loss_centerness: 0.5936, loss: 1.0154
+2021-11-11 09:48:54,010 - mmdet - INFO - Epoch [3][250/2093]	lr: 1.000e-03, eta: 7 days, 14:40:17, time: 0.613, data_time: 0.022, memory: 1862, loss_cls: 0.1319, loss_bbox: 0.2947, loss_centerness: 0.5922, loss: 1.0188
+2021-11-11 09:49:23,433 - mmdet - INFO - Epoch [3][300/2093]	lr: 1.000e-03, eta: 7 days, 14:31:42, time: 0.589, data_time: 0.018, memory: 1862, loss_cls: 0.1308, loss_bbox: 0.3049, loss_centerness: 0.5945, loss: 1.0303
+2021-11-11 09:49:54,042 - mmdet - INFO - Epoch [3][350/2093]	lr: 1.000e-03, eta: 7 days, 14:27:24, time: 0.611, data_time: 0.020, memory: 1862, loss_cls: 0.1277, loss_bbox: 0.2961, loss_centerness: 0.5924, loss: 1.0162
+2021-11-11 09:50:23,780 - mmdet - INFO - Epoch [3][400/2093]	lr: 1.000e-03, eta: 7 days, 14:20:13, time: 0.595, data_time: 0.019, memory: 1862, loss_cls: 0.1267, loss_bbox: 0.2875, loss_centerness: 0.5919, loss: 1.0061
+2021-11-11 09:50:53,955 - mmdet - INFO - Epoch [3][450/2093]	lr: 1.000e-03, eta: 7 days, 14:14:27, time: 0.602, data_time: 0.020, memory: 1862, loss_cls: 0.1365, loss_bbox: 0.2955, loss_centerness: 0.5934, loss: 1.0254
+2021-11-11 09:51:23,797 - mmdet - INFO - Epoch [3][500/2093]	lr: 1.000e-03, eta: 7 days, 14:08:18, time: 0.599, data_time: 0.022, memory: 1862, loss_cls: 0.1293, loss_bbox: 0.2850, loss_centerness: 0.5931, loss: 1.0074
+2021-11-11 09:51:53,977 - mmdet - INFO - Epoch [3][550/2093]	lr: 1.000e-03, eta: 7 days, 14:02:58, time: 0.603, data_time: 0.020, memory: 1862, loss_cls: 0.1309, loss_bbox: 0.2964, loss_centerness: 0.5920, loss: 1.0193
+tools/dist_train.sh: line 9: 26286 Killed                  PYTHONPATH="$(dirname $0)/..":$PYTHONPATH python -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=$PORT $(dirname "$0")/train.py $CONFIG --launcher pytorch ${@:3}
+/root/anaconda3/envs/origin/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 14 leaked semaphores to clean up at shutdown
+  len(cache))
+/root/anaconda3/envs/origin/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 14 leaked semaphores to clean up at shutdown
+  len(cache))
+/root/anaconda3/envs/origin/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 14 leaked semaphores to clean up at shutdown
+  len(cache))
+/root/anaconda3/envs/origin/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 14 leaked semaphores to clean up at shutdown
+  len(cache))
+/root/anaconda3/envs/origin/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 14 leaked semaphores to clean up at shutdown
+  len(cache))
+/root/anaconda3/envs/origin/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 14 leaked semaphores to clean up at shutdown
+  len(cache))
+/root/anaconda3/envs/origin/lib/python3.7/multiprocessing/semaphore_tracker.py:144: UserWarning: semaphore_tracker: There appear to be 14 leaked semaphores to clean up at shutdown
+  len(cache))
