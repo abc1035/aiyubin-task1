@@ -14,13 +14,14 @@ import os
 from ..builder import LOSSES
 from .utils import weighted_loss
 import numpy as np
+from .focal_loss import FocalLoss
 
 
 @LOSSES.register_module()
 class DepthLoss(nn.Module):
     def __init__(self, loss_weight):
         super(DepthLoss, self).__init__()
-        self.loss_func = nn.BCELoss()
+        self.loss_func = FocalLoss()
         self.loss_weight = loss_weight
         self.img_metas = None
         self.path = "/root/origin1/work_dirs/gt/"
@@ -71,6 +72,15 @@ class DepthLoss(nn.Module):
             print("{} GT has been writed!".format(os.path.join(self.path, name)))
             self.img_metas = None
         #print(depth.shape)
+        # for focal loss
+        depth=torch.flatten(depth,start_dim=0)
+        overlap=torch.flatten(overlap,start_dim=0)
+        depth=depth.unsqueeze(dim=0)
+        # overlap=torch.unsqueeze(dim=0)
+        depth1=1-depth
+        depth1 = depth1.unsqueeze(dim=0)
+        depth=torch.cat([depth,depth1],dim=0)
+        depth=depth.permute((1,0))
         loss += self.loss_func(depth, overlap)
         '''for i in range(N):  # for every_image
             image_size = depth.shape
@@ -82,6 +92,7 @@ class DepthLoss(nn.Module):
                 tl_x, tl_y, br_x, br_y = bbox_list[i][j]
                 overlap[tl_x - 1:max(br_x, image_size[0]), tl_y - 1:max(br_y, image_size[1])] = 1
             loss += self.loss_func(depth, overlap).item()'''
+        # print("fuck")
         return loss * self.loss_weight
         pass
 

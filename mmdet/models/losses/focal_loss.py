@@ -156,6 +156,12 @@ class FocalLoss(nn.Module):
         Returns:
             torch.Tensor: The calculated loss
         """
+        """print(pred.shape)
+        print(target.shape)
+        assert 1==2"""
+        """pred=torch.flatten(pred,start_dim=1)
+        print(target)
+        target=torch.flatten(target,start_dim=1)"""
         assert reduction_override in (None, 'none', 'mean', 'sum')
         reduction = (
             reduction_override if reduction_override else self.reduction)

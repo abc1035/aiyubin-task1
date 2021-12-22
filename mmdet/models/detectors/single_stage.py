@@ -91,8 +91,9 @@ class SingleStageDetector(BaseDetector):
         elif len(temp) == 3:
             x_rgb, x_depth, depth = temp
             losses2 = self.bbox_head.forward_train(x_rgb, img_metas, gt_bboxes,
-                                                   gt_labels, gt_bboxes_ignore, depth=None)
+                                                   gt_labels, gt_bboxes_ignore, depth=depth)
             losses2 = self.updatedic(losses2, "_rgb_branch")
+            # print(losses2)
             losses3 = self.bbox_head.forward_train(x_depth, img_metas, gt_bboxes,
                                                    gt_labels, gt_bboxes_ignore, depth=None, cls_loss=False)
             losses3 = self.updatedic(losses3, "_depth_branch")
