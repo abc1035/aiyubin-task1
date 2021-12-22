@@ -1,4 +1,4 @@
-use adam and nonlocaly for training.
-depth expand to 3 dim
+use adam and nonlocalx for training.
+depth expand to 1 dim
 two branch:x and x_depth
 return x

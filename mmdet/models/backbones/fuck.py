@@ -98,7 +98,7 @@ class NLBlockND(nn.Module):
 
         elif self.mode == "embedded" or self.mode == "dot":
             theta_x = self.theta(x).view(batch_size, self.inter_channels, -1)
-            phi_x = self.phi(y).view(batch_size, self.inter_channels, -1)
+            phi_x = self.phi(x).view(batch_size, self.inter_channels, -1)
             theta_x = theta_x.permute(0, 2, 1)
             f = torch.matmul(theta_x, phi_x)
 
