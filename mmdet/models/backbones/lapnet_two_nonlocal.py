@@ -79,7 +79,7 @@ class Lapnet_twoNonlocal(nn.Module):
                                 num_stages=4,
                                 out_indices=(0, 1, 2, 3),
                                 frozen_stages=1,
-                                in_channels=1,
+                                in_channels=3,
                                 norm_cfg=dict(type='BN', requires_grad=True),
                                 norm_eval=True,
                                 style='pytorch', )
@@ -98,6 +98,7 @@ class Lapnet_twoNonlocal(nn.Module):
         if it's len is 1,that mean don't calculate the LapDepth component
         """
         depth = self.depth_extractor(x)
+        depth=torch.cat([depth,depth,depth],dim=1)
         if kwargs.get("iteration", -1) > -2:
             x_depth = self.d_encoder(depth)
         else:
@@ -114,7 +115,7 @@ class Lapnet_twoNonlocal(nn.Module):
         new_x_rgb.append(item)
         if self.plot_img and False:
             self.plot(depth)
-        return x_rgb, x_depth, depth
+        return new_x_rgb, x_depth, depth
 
     def depth_extractor(self, x):
         out_featList = self.encoder(x)
