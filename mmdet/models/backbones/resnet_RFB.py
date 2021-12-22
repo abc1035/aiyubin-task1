@@ -549,6 +549,7 @@ class ResNet(BaseModule):
         self._make_stem_layer(in_channels, stem_channels)
 
         self.res_layers = []
+        self.RFB_layers = []
         for i, num_blocks in enumerate(self.stage_blocks):
             stride = strides[i]
             dilation = dilations[i]
@@ -575,7 +576,10 @@ class ResNet(BaseModule):
                 init_cfg=block_init_cfg)
             self.inplanes = planes * self.block.expansion
             layer_name = f'layer{i + 1}'
+            RFB_name=f'RFB{i+1}'
             self.add_module(layer_name, res_layer)
+            self.add_module(RFB_name,RFB)
+            self.RFB_layers.append(RFB_name)
             self.res_layers.append(layer_name)
 
         self._freeze_stages()
@@ -733,6 +737,8 @@ class ResNet(BaseModule):
         for i, layer_name in enumerate(self.res_layers):
             res_layer = getattr(self, layer_name)
             x = res_layer(x)
+            RFB = getattr(self,self.RFB_layers[i])
+            x = RFB(x)
             # print(x.shape)
             if i in self.out_indices:
                 outs.append(x)
