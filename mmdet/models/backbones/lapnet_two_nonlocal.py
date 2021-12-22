@@ -104,18 +104,18 @@ class Lapnet_twoNonlocal(nn.Module):
         else:
             x_depth = self.d_encoder(depth.detach())
         x_rgb = self.rgb_encoder(x)
-        new_x_rgb = []
+        new_x_depth = []
         # item = self.non_local1_encoder(x_rgb[0], x_depth[0])
-        new_x_rgb.append(x_rgb[0])
-        item = self.non_local2_encoder(x_rgb[1], x_depth[1])
-        new_x_rgb.append(item)
-        item = self.non_local3_encoder(x_rgb[2], x_depth[2])
-        new_x_rgb.append(item)
-        item = self.non_local4_encoder(x_rgb[3], x_depth[3])
-        new_x_rgb.append(item)
+        new_x_depth.append(x_depth[0])
+        item = self.non_local2_encoder(x_depth[1], x_rgb[1])
+        new_x_depth.append(item)
+        item = self.non_local3_encoder(x_depth[2], x_rgb[2])
+        new_x_depth.append(item)
+        item = self.non_local4_encoder(x_depth[3], x_rgb[3])
+        new_x_depth.append(item)
         if self.plot_img and False:
             self.plot(depth)
-        return new_x_rgb, x_depth, depth
+        return x_rgb, new_x_depth, depth
 
     def depth_extractor(self, x):
         out_featList = self.encoder(x)
