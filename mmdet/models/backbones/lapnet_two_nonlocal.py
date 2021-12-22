@@ -75,7 +75,7 @@ class Lapnet_twoNonlocal(nn.Module):
                                   norm_cfg=dict(type='BN', requires_grad=True),
                                   norm_eval=True,
                                   style='pytorch', )
-        self.d_encoder = ResNet(depth=34,
+        self.d_encoder = ResNet(depth=18,
                                 num_stages=4,
                                 out_indices=(0, 1, 2, 3),
                                 frozen_stages=1,
@@ -88,9 +88,9 @@ class Lapnet_twoNonlocal(nn.Module):
         self.path = "/home/ayb/origin1/work_dirs/depth_output/"
         # self.fuse = Fuse4()
         # self.non_local1_encoder = NLBlockND(64, dimension=2)
-        self.non_local2_encoder = NLBlockND(128, dimension=2)
+        """self.non_local2_encoder = NLBlockND(128, dimension=2)
         self.non_local3_encoder = NLBlockND(256, dimension=2)
-        self.non_local4_encoder = NLBlockND(512, dimension=2)
+        self.non_local4_encoder = NLBlockND(512, dimension=2)"""
 
     def forward(self, x, *args, **kwargs):
         """args means that there are some change in forward
@@ -104,7 +104,7 @@ class Lapnet_twoNonlocal(nn.Module):
         else:
             x_depth = self.d_encoder(depth.detach())
         x_rgb = self.rgb_encoder(x)
-        new_x_depth = []
+        """new_x_depth = []
         # item = self.non_local1_encoder(x_rgb[0], x_depth[0])
         new_x_depth.append(x_depth[0])
         item = self.non_local2_encoder(x_depth[1], x_rgb[1])
@@ -112,10 +112,10 @@ class Lapnet_twoNonlocal(nn.Module):
         item = self.non_local3_encoder(x_depth[2], x_rgb[2])
         new_x_depth.append(item)
         item = self.non_local4_encoder(x_depth[3], x_rgb[3])
-        new_x_depth.append(item)
+        new_x_depth.append(item)"""
         if self.plot_img and False:
             self.plot(depth)
-        return x_rgb, new_x_depth, depth
+        return x_rgb, x_depth, depth
 
     def depth_extractor(self, x):
         out_featList = self.encoder(x)

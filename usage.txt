@@ -1,4 +1,5 @@
-use adam and nonlocaly for depth_branch training.
+use adam for training.
 depth expand to 1 dim
+depth extractor is resnet18
 two branch:x and x_depth
 return x
