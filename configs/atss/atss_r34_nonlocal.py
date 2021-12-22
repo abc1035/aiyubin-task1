@@ -47,8 +47,8 @@ model = dict(
     test_cfg=dict(
         nms_pre=1000,
         min_bbox_size=0,
-        score_thr=0.3,
+        score_thr=0.05,
         nms=dict(type='nms', iou_threshold=0.6),
         max_per_img=100))
 # optimizer
-optimizer = dict(type='SGD', lr=0.001)
+optimizer = dict(_delete_=True, type='Adam', lr=0.0001, weight_decay=0.0001)

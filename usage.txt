@@ -1,0 +1,3 @@
+use adam for training and nonlocal.
+two branch:x and x_depth
+return x
