@@ -156,9 +156,10 @@ class FocalLoss(nn.Module):
         Returns:
             torch.Tensor: The calculated loss
         """
+
         """print(pred.shape)
-        print(target.shape)
-        assert 1==2"""
+        print(type(target))"""
+        """assert 1==2"""
         """pred=torch.flatten(pred,start_dim=1)
         print(target)
         target=torch.flatten(target,start_dim=1)"""

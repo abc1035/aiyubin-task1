@@ -44,7 +44,8 @@ class DepthLoss(nn.Module):
         # overlap = torch.zeros(image_size)
         # print(image_size)
         if torch.cuda.is_available():
-            overlap = overlap.cuda(device)
+            overlap = overlap.type(torch.cuda.LongTensor).cuda(device)
+            # overlap=p=overlap.cuda(device)
         # overlap[:, :] = 0
         # overlap = torch.zeros(image_size, device=device)
         # print(num_gts)
@@ -75,9 +76,9 @@ class DepthLoss(nn.Module):
         # for focal loss
         depth=torch.flatten(depth,start_dim=0)
         overlap=torch.flatten(overlap,start_dim=0)
-        depth=depth.unsqueeze(dim=0)
         # overlap=torch.unsqueeze(dim=0)
         depth1=1-depth
+        depth = depth.unsqueeze(dim=0)
         depth1 = depth1.unsqueeze(dim=0)
         depth=torch.cat([depth,depth1],dim=0)
         depth=depth.permute((1,0))
