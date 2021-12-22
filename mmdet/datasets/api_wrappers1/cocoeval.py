@@ -518,7 +518,7 @@ class COCOeval:
             stats[4] = _summarize(1, maxDets=20, areaRng='large')
             stats[5] = _summarize(0, maxDets=20)
             stats[6] = _summarize(0, maxDets=20, iouThr=.5)
-            scmtats[7] = _summarize(0, maxDets=20, iouThr=.75)
+            stats[7] = _summarize(0, maxDets=20, iouThr=.75)
             stats[8] = _summarize(0, maxDets=20, areaRng='medium')
             stats[9] = _summarize(0, maxDets=20, areaRng='large')
             return stats
