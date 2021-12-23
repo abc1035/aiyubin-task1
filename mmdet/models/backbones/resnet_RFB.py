@@ -394,8 +394,7 @@ class Bottleneck(BaseModule):
         return out
 
 
-@BACKBONES.register_module()
-class ResNet(BaseModule):
+class ResNet_RFB(BaseModule):
     """ResNet backbone.
 
     Args:
@@ -481,7 +480,11 @@ class ResNet(BaseModule):
                  zero_init_residual=True,
                  pretrained=None,
                  init_cfg=None):
-        super(ResNet, self).__init__(init_cfg)
+        super(ResNet_RFB, self).__init__(init_cfg)
+        self.RFB1=RFB(64,64)
+        self.RFB2 = RFB(128, 128)
+        self.RFB3 = RFB(256, 256)
+        self.RFB4 = RFB(512, 512)
         self.zero_init_residual = zero_init_residual
         if depth not in self.arch_settings:
             raise KeyError(f'invalid depth {depth} for resnet')
@@ -578,8 +581,8 @@ class ResNet(BaseModule):
             layer_name = f'layer{i + 1}'
             RFB_name=f'RFB{i+1}'
             self.add_module(layer_name, res_layer)
-            self.add_module(RFB_name,RFB)
-            self.RFB_layers.append(RFB_name)
+            """self.add_module(RFB_name,RFB(64*2**(i-1),64*2**(i-1)))
+            self.RFB_layers.append(RFB_name)"""
             self.res_layers.append(layer_name)
 
         self._freeze_stages()
@@ -737,8 +740,9 @@ class ResNet(BaseModule):
         for i, layer_name in enumerate(self.res_layers):
             res_layer = getattr(self, layer_name)
             x = res_layer(x)
-            RFB = getattr(self,self.RFB_layers[i])
-            x = RFB(x)
+            # RFB = getattr(self,self.RFB_layers[i])
+            #x = RFB(x)
+            exec('x=self.RFB{}'.format(i+1))
             # print(x.shape)
             if i in self.out_indices:
                 outs.append(x)
@@ -747,7 +751,7 @@ class ResNet(BaseModule):
     def train(self, mode=True):
         """Convert the model into training mode while keep normalization layer
         freezed."""
-        super(ResNet, self).train(mode)
+        super(ResNet_RFB, self).train(mode)
         self._freeze_stages()
         if mode and self.norm_eval:
             for m in self.modules():
@@ -756,8 +760,7 @@ class ResNet(BaseModule):
                     m.eval()
 
 
-@BACKBONES.register_module()
-class ResNetV1d(ResNet):
+class ResNetV1d(ResNet_RFB):
     r"""ResNetV1d variant described in `Bag of Tricks
     <https://arxiv.org/pdf/1812.01187.pdf>`_.
 

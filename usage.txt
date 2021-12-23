@@ -1,5 +1,6 @@
 use adam for training.
 depth expand to 1 dim
-depth extractor is resnet18
+depth extractor is resnet18 with RFB moudle
+without nonlocal
 two branch:x and x_depth
 return x
