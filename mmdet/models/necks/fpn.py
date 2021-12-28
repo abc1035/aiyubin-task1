@@ -105,6 +105,7 @@ class FPN(BaseModule):
 
         self.lateral_convs = nn.ModuleList()
         self.fpn_convs = nn.ModuleList()
+        self.fusion_convs = nn.ModuleList()
 
         for i in range(self.start_level, self.backbone_end_level):
             l_conv = ConvModule(
@@ -155,9 +156,9 @@ class FPN(BaseModule):
                     act_cfg=act_cfg,
                     inplace=False)
                 self.fpn_convs.append(extra_fpn_conv)
-    self.cbamlist=nn.ModuleList()
-    for i in range(3):
-        self.cbamlist.append(CBAM(256))
+        self.cbamlist=nn.ModuleList()
+        for i in range(3):
+            self.cbamlist.append(CBAM(256))
 
     @auto_fp16()
     def forward(self, inputs,fusion=None):
@@ -170,16 +171,19 @@ class FPN(BaseModule):
             for i, lateral_conv in enumerate(self.lateral_convs)
         ]
         new_fusion=[
-            fusion_conv(inputs[i + self.start_level])
-            for i, fusion_conv in enumerate(self.fushion_convs)
+            fusion_conv(fusion[i + self.start_level])
+            for i, fusion_conv in enumerate(self.fusion_convs)
         ]
+        # print(new_fusion)
         fusion=new_fusion
+        # print(len(fusion))
         # build top-down path
         used_backbone_levels = len(laterals)
         for i in range(used_backbone_levels - 1, 0, -1):
             # In some cases, fixing `scale factor` (e.g. 2) is preferred, but
             #  it cannot co-exist with `size` in `F.interpolate`.
-            laterals[i]=self.cbamlist[i](fusion[i+1],laterals[i])
+            # print(i)
+            laterals[i]=self.cbamlist[i](fusion[i],laterals[i])
             if 'scale_factor' in self.upsample_cfg:
                 laterals[i - 1] += F.interpolate(laterals[i],
                                                  **self.upsample_cfg)
@@ -187,7 +191,7 @@ class FPN(BaseModule):
                 prev_shape = laterals[i - 1].shape[2:]
                 laterals[i - 1] += F.interpolate(
                     laterals[i], size=prev_shape, **self.upsample_cfg)
-        laterals[0]=self.cbamlist[0](fusion[1],laterals[0])
+        laterals[0]=self.cbamlist[0](fusion[0],laterals[0])
         # build outputs
         # part 1: from original levels
         outs = [

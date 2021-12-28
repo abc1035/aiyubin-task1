@@ -145,8 +145,8 @@ class lcx1(nn.Module):
                 fusion.append(item)
 
 
-        for i,rgb in enumerate(x_rgb):
-            fusion.append(torch.add(rgb,new_x_depth[i]))
+        """for i,rgb in enumerate(x_rgb):
+            fusion.append(torch.add(rgb,new_x_depth[i]))"""
 
         if self.plot_img and False:
             self.plot(depth)

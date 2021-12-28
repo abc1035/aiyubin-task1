@@ -671,7 +671,7 @@ class ResNet_Nonlocal(BaseModule):
                     m.eval()
 
 
-class ResNetV1d(ResNet):
+class ResNetV1d(ResNet_Nonlocal):
     r"""ResNetV1d variant described in `Bag of Tricks
     <https://arxiv.org/pdf/1812.01187.pdf>`_.
 
