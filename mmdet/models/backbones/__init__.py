@@ -7,5 +7,5 @@ from .lapnet_twobranches import Lapnet_twoBranches
 from .lapnet_two_nonlocal import Lapnet_twoNonlocal
 
 __all__ = [
-     'ResNet', 'ResNetV1d',  'LDRNConcat', 'LapFusion', 'Lapnet_twoBranches', 'Lapnet_twoNonlocal'
+     'ResNet', 'ResNetV1d',  'LDRNConcat', 'LapFusion', 'Lapnet_twoBranches', 'Lapnet_twoNonlocal', 'lcx1'
 ]
