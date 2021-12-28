@@ -81,7 +81,10 @@ class SingleStageDetector(BaseDetector):
             dict[str, Tensor]: A dictionary of loss components.
         """
         super(SingleStageDetector, self).forward_train(img, img_metas)
-        temp = self.extract_feat(img)
+        x,y = self.extract_feat(img)
+        losses = self.bbox_head.forward_train(x, img_metas, gt_bboxes,
+                                              gt_labels, gt_bboxes_ignore, depth=y)
+        return losses
         # temp = self.extract_feat_fuse_after(img)
         if len(temp) == 2:
             x, y = temp
@@ -134,7 +137,7 @@ class SingleStageDetector(BaseDetector):
         # feat = self.extract_feat_fuse_after(img, 1, img_metas, branch="main")
         # print("fuck")
         # print(feat[1].flatten().mean())
-        feat = self.extract_feat(img, 1)
+        feat,y = self.extract_feat(img, 1)
         results_list = self.bbox_head.simple_test(
             feat, img_metas, rescale=rescale)
         bbox_results = [

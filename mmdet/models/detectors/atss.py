@@ -35,6 +35,9 @@ class ATSS(SingleStageDetector):
             self.backbone.give_img(args[1])
         temp = self.backbone(img, iteration=self.iteration)
         main_x_rgb, fusion, depth = self.backbone(img)
+        if self.with_neck:
+            main_x_rgb = self.neck(main_x_rgb,fusion)
+        return main_x_rgb, depth
 
     def extract_feat1(self, img):
         x, y = self.backbone(img)

@@ -44,7 +44,7 @@ class ChannelGate(nn.Module):
             nn.Linear(gate_channels // reduction_ratio, gate_channels)
             )
         self.pool_types = pool_types
-    def forward(self, x):
+    def forward(self, x,y=None):
         channel_att_sum = None
         for pool_type in self.pool_types:
             if pool_type=='avg':
@@ -67,6 +67,8 @@ class ChannelGate(nn.Module):
                 channel_att_sum = channel_att_sum + channel_att_raw
 
         scale = F.sigmoid( channel_att_sum ).unsqueeze(2).unsqueeze(3).expand_as(x)
+        if y is not None:
+            return y*scale
         return x * scale
 
 def logsumexp_2d(tensor):
@@ -85,10 +87,12 @@ class SpatialGate(nn.Module):
         kernel_size = 7
         self.compress = ChannelPool()
         self.spatial = BasicConv(2, 1, kernel_size, stride=1, padding=(kernel_size-1) // 2, relu=False)
-    def forward(self, x):
+    def forward(self, x,y=None):
         x_compress = self.compress(x)
         x_out = self.spatial(x_compress)
         scale = F.sigmoid(x_out) # broadcasting
+        if y is not None:
+            return y*scale
         return x * scale
 
 class CBAM(nn.Module):
@@ -98,8 +102,14 @@ class CBAM(nn.Module):
         self.no_spatial=no_spatial
         if not no_spatial:
             self.SpatialGate = SpatialGate()
-    def forward(self, x):
-        x_out = self.ChannelGate(x)
+    def forward(self, x,y=None):
+        if y is not None:
+            x_out = self.ChannelGate(x,y)
+        else :
+            x_out = self.ChannelGate(x)
         if not self.no_spatial:
-            x_out = self.SpatialGate(x_out)
+            if y is not None:
+                x_out = self.SpatialGate(x_out,y)
+            else :
+                x_out = self.SpatialGate(x_out)
         return x_out
