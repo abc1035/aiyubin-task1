@@ -33,10 +33,10 @@ class ATSS(SingleStageDetector):
     def extract_feat(self, img, *args, **kwargs):
         if len(args) == 2:
             self.backbone.give_img(args[1])
-        x,y=self.backbone(img)
+        x=self.backbone(img)
         if self.with_neck:
             x=self.neck(x)
-        return x,y
+        return x
 
     def extract_feat1(self, img):
         x, y = self.backbone(img)

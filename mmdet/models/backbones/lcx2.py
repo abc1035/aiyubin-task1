@@ -80,43 +80,12 @@ class lcx2(nn.Module):
                                   norm_cfg=dict(type='BN', requires_grad=True),
                                   norm_eval=True,
                                   style='pytorch', )
-        self.main_rgb_encoder = ResNet_Stage(depth=34,
-                                  num_stages=4,
-                                  out_indices=(0, 1, 2, 3),
-                                  frozen_stages=1,
-                                  in_channels=3,
-                                  norm_cfg=dict(type='BN', requires_grad=True),
-                                  norm_eval=True,
-                                  style='pytorch', )
-        self.d_encoder = ResNet_Stage(depth=34,
-                                num_stages=4,
-                                out_indices=(0, 1, 2, 3),
-                                frozen_stages=1,
-                                in_channels=1,
-                                norm_cfg=dict(type='BN', requires_grad=True),
-                                norm_eval=True,
-                                style='pytorch', )
         self.plot_img = True
         self.img_metas = None
         self.path = "/home/ayb/origin1/work_dirs/depth_output/"
         self.out_indices = (0, 1, 2, 3)
         # for feature fusion
         self.feat_channels = [64, 128, 256, 512]
-        self.rgbconvs1 = nn.ModuleList()
-        self.depthconvs1 = nn.ModuleList()
-        self.rgbconvs2 = nn.ModuleList()
-        self.depthconvs2 = nn.ModuleList()
-        self.relu = nn.ReLU()
-        for channel in self.feat_channels:
-            self.rgbconvs1.append(
-                nn.Conv2d(in_channels=channel, out_channels=channel, kernel_size=3, stride=1, padding=1))
-            self.depthconvs1.append(
-                nn.Conv2d(in_channels=channel, out_channels=channel, kernel_size=3, stride=1, padding=1))
-            self.rgbconvs2.append(
-                nn.Conv2d(in_channels=channel, out_channels=channel, kernel_size=3, stride=1, padding=1))
-            self.depthconvs2.append(
-                nn.Conv2d(in_channels=channel, out_channels=channel, kernel_size=3, stride=1, padding=1))
-
         self.cbams=nn.ModuleList()
         for channel in self.feat_channels:
             self.cbams.append(CBAM(channel))
@@ -129,40 +98,23 @@ class lcx2(nn.Module):
         x_depth & new_x_depth: depth for fusion moudle
         main_x_rgb : rgb feature for fpn and final.
         """
-        depth = self.depth_extractor(x)
         # depth=torch.cat([depth,depth,depth],dim=1)
         x_rgb,rgb_reslayers= self.rgb_encoder(x)
-        x_depth,depth_reslayers = self.d_encoder(depth)
-        main_x_rgb,main_reslayers=self.main_rgb_encoder(x)
-        fusion=[]
         rgb_list=[]
-        for i,depth_layer in enumerate(depth_reslayers):
-            x_rgb=rgb_reslayers[i](x_rgb)
-            x_depth=depth_layer(x_depth)
-            main_x_rgb=main_reslayers[i](main_x_rgb)
-            ## fuse
-            fusion.append(self.fuse(x_rgb,x_depth,i))
+        for i,rgb_layer in enumerate(rgb_reslayers):
+            x_rgb=rgb_layer(x_rgb)
             if i in self.out_indices:
-                main_x_rgb=self.cbams[i](fusion[i],main_x_rgb)
+                main_x_rgb=self.cbams[i](x_rgb)
                 rgb_list.append(main_x_rgb)
 
 
 
         if self.plot_img and False:
             self.plot(depth)
-        return rgb_list, depth
+        return rgb_list
 
 
 
-    def fuse(self,x_rgb,x_depth,i):
-        x_depth_temp = self.relu(self.depthconvs1[i](x_depth))
-        x_depth_temp = self.relu(self.depthconvs2[i](x_depth_temp))
-        x_rgb_temp = self.relu(self.rgbconvs1[i](x_rgb))
-        x_rgb_temp = self.relu(self.rgbconvs2[i](x_rgb_temp))
-        x_depth_feat = self.relu(torch.add(x_depth, x_depth_temp))
-        x_rgb_feat = self.relu(torch.add(x_rgb, x_rgb_temp))
-        x_temp = torch.add(x_depth_feat, x_rgb_feat)
-        return x_temp
     def depth_extractor(self, x):
         out_featList = self.encoder(x)
         rgb_down2 = F.interpolate(x, scale_factor=0.5, mode='bilinear')
