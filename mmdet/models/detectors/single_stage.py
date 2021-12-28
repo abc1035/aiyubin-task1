@@ -133,7 +133,7 @@ class SingleStageDetector(BaseDetector):
         # feat = self.extract_feat_fuse_after(img, 1, img_metas, branch="main")
         # print("fuck")
         # print(feat[1].flatten().mean())
-        feat = self.extract_feat(img, 1)
+        feat,y = self.extract_feat(img, 1)
         results_list = self.bbox_head.simple_test(
             feat, img_metas, rescale=rescale)
         bbox_results = [

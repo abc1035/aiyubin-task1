@@ -1,3 +1,5 @@
 use adam for training and nonlocal.
-two branch:x and x_depth
+lcx's second method
+fuse RGB and depth generate RGBD feature.
+channel attention for RGB
 return x

@@ -33,59 +33,10 @@ class ATSS(SingleStageDetector):
     def extract_feat(self, img, *args, **kwargs):
         if len(args) == 2:
             self.backbone.give_img(args[1])
-        temp = self.backbone(img, iteration=self.iteration)
-        x, depth, x_rgb, x_depth = 0, 0, 0, 0
-        if len(temp) == 2:
-            x, depth = temp
-        if len(temp) == 3:
-            x, x_depth, depth = temp
-        elif len(temp) == 4:
-            x, x_rgb, x_depth, depth = temp
-        """for item in x:
-            print(item.shape)"""
-        """depth2list = self.convlist(y)
-        size_list = []
-        for feat in x:
-            size_list.append(tuple([feat.shape[-2], feat.shape[-1]]))
-        pool = AdaptiveAvgPool(size_list)
-        x = pool(x, depth2list)"""
-        """size_list = []
-        for feat in x:
-            size_list.append(tuple([feat.shape[-2], feat.shape[-1]]))
-        pool = AdaptiveAvgPool(size_list, self.convlist)
-        x = pool(x, y)"""
-        """size_list = []
-        for feat in x:
-            size_list.append(tuple([feat.shape[-2], feat.shape[-1]]))
-        pool = AdaptiveAvgPool(size_list, self.convlist)
-        x = pool(x, y, "mutal")"""
-        # print(type(x))
-        # x = x[1:]
+        x,y=self.backbone(img)
         if self.with_neck:
-            x = self.neck(x)
-            if x_depth != 0:
-                x_depth = self.neck1(x_depth)
-            if x_rgb != 0:
-                x_rgb = self.neck2(x_rgb)
-        self.iteration += 1
-        # print(self.iteration)
-        """for item in x:
-            print(item.shape)
-        assert 1==2"""
-        if len(args) == 0:
-            if x_depth != 0 and x_rgb != 0:
-                return x, x_rgb, x_depth, depth
-            elif x_depth != 0:
-                return x, x_depth, depth
-            else:
-                return x, depth
-        else:
-
-            branch = kwargs.get("branch", "main")
-            if branch == "main":
-                return x
-            elif branch == "rgb":
-                return x_rgb
+            x=self.neck(x)
+        return x,y
 
     def extract_feat1(self, img):
         x, y = self.backbone(img)
