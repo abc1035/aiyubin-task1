@@ -1,5 +1,1 @@
-use adam for training and nonlocal.
-lcx's second method
-fuse RGB and depth generate RGBD feature.
-channel attention for RGB
-return x
+task10 update depth into RGB.

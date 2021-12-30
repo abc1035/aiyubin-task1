@@ -92,7 +92,7 @@ class lcx2(nn.Module):
                                 num_stages=4,
                                 out_indices=(0, 1, 2, 3),
                                 frozen_stages=1,
-                                in_channels=1,
+                                in_channels=3,
                                 norm_cfg=dict(type='BN', requires_grad=True),
                                 norm_eval=True,
                                 style='pytorch', )
@@ -129,10 +129,10 @@ class lcx2(nn.Module):
         x_depth & new_x_depth: depth for fusion moudle
         main_x_rgb : rgb feature for fpn and final.
         """
-        depth = self.depth_extractor(x)
+        # depth = self.depth_extractor(x)
         # depth=torch.cat([depth,depth,depth],dim=1)
         x_rgb,rgb_reslayers= self.rgb_encoder(x)
-        x_depth,depth_reslayers = self.d_encoder(depth)
+        x_depth,depth_reslayers = self.d_encoder(x)
         main_x_rgb,main_reslayers=self.main_rgb_encoder(x)
         fusion=[]
         rgb_list=[]
@@ -150,7 +150,7 @@ class lcx2(nn.Module):
 
         if self.plot_img and False:
             self.plot(depth)
-        return rgb_list, depth
+        return rgb_list
 
 
 
