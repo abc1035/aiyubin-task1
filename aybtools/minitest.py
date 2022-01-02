@@ -3,12 +3,22 @@ import json
 
 f = open("/home/ayb/UVM_Datasets/voc_test3.json", "r")
 line = f.readline()
-f.close()
 dic = eval(line)
+f.close()
+f2=open("/home/ayb/work_dirs/depth/wrong1.txt","r")
+imgs=[]
+while True:
+    line=f2.readline()
+    if line:
+        imgs.append(line.rstrip())
+    else:
+        break
+print(imgs)
+f2.close()
 images = dic['images']
 new_images=[]
 for image in images:
-    if "ten" in image['file_name']:
+    if image['file_name'] not in imgs:
         continue
     else:
         new_images.append(image)
@@ -23,7 +33,7 @@ for annotation in annotations:
         new_annotations.append(annotation)
 dic["images"] = new_images
 dic["annotations"] = new_annotations
-f1 = open("/home/ayb/UVM_Datasets/voc_test_not_ten.json", "w")
+f1 = open("/home/ayb/UVM_Datasets/voc_test_for_depth.json", "w")
 dic_json = json.dumps(dic)
 f1.write(str(dic_json))
 f1.close()

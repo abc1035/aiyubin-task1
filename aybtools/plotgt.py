@@ -16,13 +16,15 @@ import gc
 import os
 import psutil
 
-ann_path = "/home/ayb/UVM_Datasets/voc_test3.json"
+ann_path = "/home/ayb/UVM_Datasets/voc_test_for_depth.json"
 classnames = ['fenda', 'yingyangkuaixian', 'jiaduobao', 'maidong', 'TYCL', 'BSS', 'TYYC', 'LLDS', 'KSFH', 'MZY']
-config_file = '/home/ayb/origin1/configs/atss/atss_r34_nonlocal.py'
-checkpoint_file = "/home/ayb/work_dirs/nonlocal/epoch_22.pth"
-prefix = '/home/ayb/UVM_Datasets/voc8/VOCdevkit/VOC2007/JPEGImages/'
-save_dir = '/home/ayb/work_dirs/nonlocalerror/'
-error_path = "/home/ayb/work_dirs/nonlocalerror/wrong1.txt"
+config_file = '/home/ayb/origin1/configs/atss/atss_lcx1.py'
+checkpoint_file = "/home/ayb/epoch_10.pth"
+#prefix = '/home/ayb/UVM_Datasets/voc8/VOCdevkit/VOC2007/JPEGImages/'
+prefix = '/home/ayb/work_dirs/depth/fuse/'
+# save_dir = '/home/ayb/work_dirs/nonlocalerror/'
+save_dir='/home/ayb/work_dirs/depth/compare/'
+error_path = "/home/ayb/work_dirs/depth/wrong1.txt" # has been modified
 model = init_detector(config_file, checkpoint_file, device='cuda:0')
 
 f = open(ann_path, "r")
@@ -40,7 +42,8 @@ while True:
     else:
         break
 f.close()
-exist = os.listdir(save_dir)
+# exist = os.listdir(save_dir)
+exist=[]
 
 
 def get_bbox(id):
@@ -68,6 +71,7 @@ for item in tqdm(images):
     bbox, label = get_bbox(item['id'])
     img = prefix + item['file_name']
     result = inference_detector(model, img)
-    model.show_result(img, result, out_file=save_dir + img_name, bbox=bbox, label=label)
+    # print(result)
+    model.show_result(img, result, out_file=save_dir + img_name.replace(".jpg","1.jpg"), bbox=bbox, label=label)
     del result, bbox, label, img_name, img
     gc.collect()

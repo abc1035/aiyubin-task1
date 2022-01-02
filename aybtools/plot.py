@@ -30,11 +30,24 @@ def plot(Path):
     b = Image.fromarray(a.squeeze(), mode='L')
     b.save(Path.replace(".txt", ".jpg"))
 
+def plot1(Path):
+    if os.path.exists(Path.replace(".txt", ".jpg")):
+        pass
+    f = open(Path, "r")
+    line = f.readline()
+    line = eval(line)
+    f.close()
+    line=np.array(line)
+    a = line * 255
+    # print(a.mean())
+    a = a.astype(np.uint8)
+    b = Image.fromarray(a.squeeze(), mode='L')
+    b.save(Path.replace(".txt", ".jpg"))
 
-prefix = "/home/ayb/work_dirs/"
+prefix = "/home/ayb/work_dirs/depth"
 L = os.listdir(prefix)
 for name in L:
-    if ".txt" in name:
+    if ".txt" in name and "wrong" not in name:
         Path = os.path.join(prefix, name)
-        plot(Path)
+        plot1(Path)
         print("{} is ok!".format(os.path.join(prefix, name)))
