@@ -107,6 +107,7 @@ class lcx1(nn.Module):
         self.nonlocal_list.append(self.non_local2_encoder)
         self.nonlocal_list.append(self.non_local3_encoder)
         self.nonlocal_list.append(self.non_local4_encoder)
+        self.softmax=nn.Softmax(dim=2)
 
     def forward(self, x, *args, **kwargs):
         """args means that there are some change in forward
@@ -117,6 +118,11 @@ class lcx1(nn.Module):
         main_x_rgb : rgb feature for fpn and final.
         """
         depth = self.depth_extractor(x)
+        grad_depth = depth
+        shape0,shape1,shape2,shape3 = depth.shape
+        depth = torch.flatten(depth, start_dim=2)
+        depth = self.softmax(depth)
+        depth=torch.reshape(depth,(shape0,shape1,shape2,shape3))
         # depth=torch.cat([depth,depth,depth],dim=1)
         x_rgb,rgb_reslayers= self.rgb_encoder(x)
         x_depth,depth_reslayers = self.d_encoder(depth)
@@ -150,7 +156,7 @@ class lcx1(nn.Module):
 
         if self.plot_img and False:
             self.plot(depth)
-        return main_x_rgb, fusion, depth
+        return main_x_rgb, fusion, grad_depth
 
     def depth_extractor(self, x):
         out_featList = self.encoder(x)
